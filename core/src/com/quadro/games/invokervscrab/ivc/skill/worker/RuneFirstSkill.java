@@ -5,4 +5,6 @@ package com.quadro.games.invokervscrab.ivc.skill.worker;
  */
 public class RuneFirstSkill extends AbstractRuneSkill {
 
+    public static String SPRITE_NAME = "skill.quas";
+
 }

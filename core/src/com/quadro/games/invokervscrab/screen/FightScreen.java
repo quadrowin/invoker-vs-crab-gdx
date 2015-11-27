@@ -16,10 +16,25 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.quadro.games.invokervscrab.IvcGame;
 import com.quadro.games.invokervscrab.SL;
 import com.quadro.games.invokervscrab.ivc.BuffSlot;
+import com.quadro.games.invokervscrab.ivc.GameCallback;
+import com.quadro.games.invokervscrab.ivc.IvcProcessor;
 import com.quadro.games.invokervscrab.ivc.skill.SkillItem;
+import com.quadro.games.invokervscrab.ivc.skill.worker.MixSkill;
+import com.quadro.games.invokervscrab.ivc.skill.worker.MixedFirstSkill;
+import com.quadro.games.invokervscrab.ivc.skill.worker.MixedSecondSkill;
 import com.quadro.games.invokervscrab.ivc.skill.worker.RuneFirstSkill;
 import com.quadro.games.invokervscrab.ivc.skill.worker.RuneSecondSkill;
 import com.quadro.games.invokervscrab.ivc.skill.worker.RuneThirdSkill;
+import com.quadro.games.invokervscrab.ivc.skill.worker.mixed.Result111;
+import com.quadro.games.invokervscrab.ivc.skill.worker.mixed.Result112;
+import com.quadro.games.invokervscrab.ivc.skill.worker.mixed.Result113;
+import com.quadro.games.invokervscrab.ivc.skill.worker.mixed.Result122;
+import com.quadro.games.invokervscrab.ivc.skill.worker.mixed.Result123;
+import com.quadro.games.invokervscrab.ivc.skill.worker.mixed.Result133;
+import com.quadro.games.invokervscrab.ivc.skill.worker.mixed.Result222;
+import com.quadro.games.invokervscrab.ivc.skill.worker.mixed.Result223;
+import com.quadro.games.invokervscrab.ivc.skill.worker.mixed.Result233;
+import com.quadro.games.invokervscrab.ivc.skill.worker.mixed.Result333;
 import com.quadro.games.invokervscrab.style.EmptyDrawable;
 
 import java.util.ArrayList;
@@ -34,7 +49,7 @@ public class FightScreen extends AbstractIvcScreen {
 
     private TextButton.TextButtonStyle textButtonStyle;
     private BitmapFont font;
-    private Skin skin;
+    private Skin mSkin;
     private TextureAtlas buttonAtlas;
 
     private final List<ImageButton> mBuffStack = new ArrayList<ImageButton>();
@@ -48,23 +63,39 @@ public class FightScreen extends AbstractIvcScreen {
         mStage.getViewport().update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
 
         font = new BitmapFont();
-        skin = new Skin();
+        mSkin = new Skin();
         buttonAtlas = new TextureAtlas(Gdx.files.internal("data/ui/button.pack"));
-        skin.addRegions(buttonAtlas);
+        mSkin.addRegions(buttonAtlas);
 
-        skin.add("skill.quas", new Sprite(new Texture(Gdx.files.internal("data/skill/quas.png"))));
-        skin.add("skill.wex", new Sprite(new Texture(Gdx.files.internal("data/skill/wex.png"))));
-        skin.add("skill.exort", new Sprite(new Texture(Gdx.files.internal("data/skill/exort.png"))));
+        mSkin.add(RuneFirstSkill.class.getName(), new Sprite(new Texture(Gdx.files.internal("data/skill/quas.png"))));
+        mSkin.add(RuneSecondSkill.class.getName(), new Sprite(new Texture(Gdx.files.internal("data/skill/wex.png"))));
+        mSkin.add(RuneThirdSkill.class.getName(), new Sprite(new Texture(Gdx.files.internal("data/skill/exort.png"))));
+        mSkin.add(MixSkill.class.getName(), new Sprite(new Texture(Gdx.files.internal("data/skill/invoke.png"))));
+
+        mSkin.add(Result111.class.getName(), new Sprite(new Texture(Gdx.files.internal("data/skill/cold_snap.png"))));
+        mSkin.add(Result112.class.getName(), new Sprite(new Texture(Gdx.files.internal("data/skill/ghost_walk.png"))));
+        mSkin.add(Result113.class.getName(), new Sprite(new Texture(Gdx.files.internal("data/skill/ice_wall.png"))));
+
+        mSkin.add(Result122.class.getName(), new Sprite(new Texture(Gdx.files.internal("data/skill/tornado.png"))));
+        mSkin.add(Result123.class.getName(), new Sprite(new Texture(Gdx.files.internal("data/skill/deafening_blast.png"))));
+        mSkin.add(Result133.class.getName(), new Sprite(new Texture(Gdx.files.internal("data/skill/chaos_meteor.png"))));
+
+        mSkin.add(Result222.class.getName(), new Sprite(new Texture(Gdx.files.internal("data/skill/emp.png"))));
+        mSkin.add(Result223.class.getName(), new Sprite(new Texture(Gdx.files.internal("data/skill/alacrity.png"))));
+        mSkin.add(Result233.class.getName(), new Sprite(new Texture(Gdx.files.internal("data/skill/forge_spirit.png"))));
+
+        mSkin.add(Result333.class.getName(), new Sprite(new Texture(Gdx.files.internal("data/skill/sun_strike.png"))));
 
         textButtonStyle = new TextButton.TextButtonStyle();
         textButtonStyle.font = font;
-        textButtonStyle.up = skin.getDrawable("button-up");
-        textButtonStyle.down = skin.getDrawable("button-down");
+        textButtonStyle.up = mSkin.getDrawable("button-up");
+        textButtonStyle.down = mSkin.getDrawable("button-down");
 //        textButtonStyle.checked = skin.getDrawable("checked-button");
 
-        Drawable quasUp = new SpriteDrawable(skin.getSprite("skill.quas"));
-        Drawable quasWex = new SpriteDrawable(skin.getSprite("skill.wex"));
-        Drawable quasExort = new SpriteDrawable(skin.getSprite("skill.exort"));
+        Drawable drawUp = new SpriteDrawable(mSkin.getSprite(RuneFirstSkill.class.getName()));
+        Drawable drawWex = new SpriteDrawable(mSkin.getSprite(RuneSecondSkill.class.getName()));
+        Drawable drawExort = new SpriteDrawable(mSkin.getSprite(RuneThirdSkill.class.getName()));
+        Drawable drawMix = new SpriteDrawable(mSkin.getSprite(MixSkill.class.getName()));
 
         ClickListener skillClickListener = new ClickListener() {
 
@@ -92,39 +123,43 @@ public class FightScreen extends AbstractIvcScreen {
 
         };
 
-        ImageButton btnQuas = new ImageButton(quasUp, quasUp);
+        ImageButton btnQuas = new ImageButton(drawUp, drawUp);
         btnQuas.setBounds(0, 200, 50, 50);
+        mSkillToButton.put(RuneFirstSkill.class.getName(), btnQuas);
 
-        SkillItem si = SL.getGame().getSkill(RuneFirstSkill.class.getName());
-        if (si == null) {
-            throw new RuntimeException("not found!");
-        }
-
-        btnQuas.setUserObject(SL.getGame().getSkill(RuneFirstSkill.class.getName()));
-        btnQuas.addListener(skillClickListener);
-        mStage.addActor(btnQuas);
-
-        ImageButton btnWex = new ImageButton(quasWex);
+        ImageButton btnWex = new ImageButton(drawWex);
         btnWex.setBounds(0, 140, 50, 50);
-        btnWex.setUserObject(SL.getGame().getSkill(RuneSecondSkill.class.getName()));
-        btnWex.addListener(skillClickListener);
-        mStage.addActor(btnWex);
+        mSkillToButton.put(RuneSecondSkill.class.getName(), btnWex);
 
-        ImageButton btnExort = new ImageButton(quasExort);
+        ImageButton btnExort = new ImageButton(drawExort);
         btnExort.setBounds(0, 80, 50, 50);
-        btnExort.setUserObject(SL.getGame().getSkill(RuneThirdSkill.class.getName()));
-        btnExort.addListener(skillClickListener);
-        mStage.addActor(btnExort);
+        mSkillToButton.put(RuneThirdSkill.class.getName(), btnExort);
 
         TextButton btnHint = new TextButton("Hint", textButtonStyle);
         btnHint.setBounds(0, 260, 80, 40);
         mStage.addActor(btnHint);
 
-        mSkillToButton.put(RuneFirstSkill.class.getName(), btnQuas);
-        mSkillToButton.put(RuneSecondSkill.class.getName(), btnWex);
-        mSkillToButton.put(RuneThirdSkill.class.getName(), btnExort);
+        final Drawable transparent = new EmptyDrawable();
 
-        Drawable transparent = new EmptyDrawable();
+        ImageButton btnFirstMixed = new ImageButton(transparent);
+        btnFirstMixed.setBounds(350, 200, 50, 50);
+        mSkillToButton.put(MixedFirstSkill.class.getName(), btnFirstMixed);
+
+        ImageButton btnSecondMixed = new ImageButton(transparent);
+        btnSecondMixed.setBounds(350, 140, 50, 50);
+        mSkillToButton.put(MixedSecondSkill.class.getName(), btnSecondMixed);
+
+        ImageButton btnInvoke = new ImageButton(drawMix);
+        btnInvoke.setBounds(350, 80, 50, 50);
+        mSkillToButton.put(MixSkill.class.getName(), btnInvoke);
+
+        for (Map.Entry<String, ImageButton> entry : mSkillToButton.entrySet()) {
+            String skillClass = entry.getKey();
+            ImageButton btn = entry.getValue();
+            btn.setUserObject(SL.getGame().getSkill(skillClass));
+            btn.addListener(skillClickListener);
+            mStage.addActor(btn);
+        }
 
         for (int i = 0; i < 3; i++) {
             ImageButton buff = new ImageButton(transparent);
@@ -132,6 +167,33 @@ public class FightScreen extends AbstractIvcScreen {
             mBuffStack.add(buff);
             mStage.addActor(buff);
         }
+
+        // Миксованные скилы
+        SL.getGame().setOnMixedChange(new GameCallback() {
+
+            @Override
+            public void run(IvcProcessor game) {
+                SkillItem[] mixed = game.getMixedSkills();
+
+                ImageButton btn1 = mSkillToButton.get(MixedFirstSkill.class.getName());
+                if (mixed[0] == null) {
+                    btn1.getStyle().imageUp = transparent;
+                } else {
+                    Drawable dr = new SpriteDrawable(mSkin.getSprite(mixed[0].getWorkerName()));
+                    btn1.getStyle().imageUp = dr;
+                }
+
+                ImageButton btn2 = mSkillToButton.get(MixedSecondSkill.class.getName());
+                if (mixed[1] == null) {
+                    btn2.getStyle().imageUp = transparent;
+                } else {
+                    Drawable dr = new SpriteDrawable(mSkin.getSprite(mixed[1].getWorkerName()));
+                    btn2.getStyle().imageUp = dr;
+                }
+
+            }
+
+        });
     }
 
     @Override
