@@ -35,6 +35,7 @@ import com.quadro.games.invokervscrab.ivc.skill.worker.mixed.Result222;
 import com.quadro.games.invokervscrab.ivc.skill.worker.mixed.Result223;
 import com.quadro.games.invokervscrab.ivc.skill.worker.mixed.Result233;
 import com.quadro.games.invokervscrab.ivc.skill.worker.mixed.Result333;
+import com.quadro.games.invokervscrab.mob.Crab;
 import com.quadro.games.invokervscrab.style.EmptyDrawable;
 
 import java.util.ArrayList;
@@ -46,6 +47,8 @@ import java.util.Map;
  * Created by Quadrowin on 27.11.2015.
  */
 public class FightScreen extends AbstractIvcScreen {
+
+    private Crab mEnemy = new Crab();
 
     private TextButton.TextButtonStyle textButtonStyle;
     private BitmapFont font;
@@ -118,7 +121,7 @@ public class FightScreen extends AbstractIvcScreen {
                     btn.setVisible(true);
                 }
 
-//                updateQuestion();
+                updateQuestion();
             }
 
         };
@@ -200,6 +203,7 @@ public class FightScreen extends AbstractIvcScreen {
     public void draw(float delta) {
         mStage.act(delta);
         mStage.draw();
+        mEnemy.draw(mStage.getCamera().projection);
     }
 
     @Override
@@ -209,6 +213,10 @@ public class FightScreen extends AbstractIvcScreen {
 
     @Override
     public void update(float delta) {
+
+    }
+
+    private void updateQuestion() {
 
     }
 
