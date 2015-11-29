@@ -64,7 +64,9 @@ public class IvcProcessor {
             RuneThirdSkill.class.getName(),
     };
 
-    private com.quadro.games.invokervscrab.ivc.GameCallback mOnMixedChange;
+    private GameCallback mOnMixedChange;
+
+    private GameCallback mOnSkillNotEnoughMp;
 
     public IvcProcessor() {
 
@@ -93,7 +95,7 @@ public class IvcProcessor {
                 ),
                 // Миксование
                 new SkillItem(
-                        new SkillInfo("Mix", "Mix runes", 0),
+                        new SkillInfo("Mix", "Mix runes", 20),
                         new MixSkill()
                 ),
                 // Результаты миксования
@@ -213,6 +215,10 @@ public class IvcProcessor {
         mOnMixedChange = callback;
     }
 
+    public void setOnSkillNotEnoughMp(GameCallback callback) {
+        mOnSkillNotEnoughMp = callback;
+    }
+
     public void tryUseMixed(int index) {
         if (mMixedSkills[index] == null) {
             return ;
@@ -220,6 +226,15 @@ public class IvcProcessor {
         if (mMixedSkills[index].getWorker().getClass().getName() == mCurrentQuestion) {
             randomizeQuestion();
         }
+    }
+
+    public boolean tryUseMp(int mp) {
+        if (mPlayer.mCurrentMp < mp) {
+            mOnSkillNotEnoughMp.run(this);
+            return false;
+        }
+        mPlayer.mCurrentMp -= mp;
+        return true;
     }
 
 }

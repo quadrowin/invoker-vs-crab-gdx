@@ -21,6 +21,7 @@ import com.quadro.games.invokervscrab.ivc.BuffSlot;
 import com.quadro.games.invokervscrab.ivc.GameCallback;
 import com.quadro.games.invokervscrab.ivc.GameObjectState;
 import com.quadro.games.invokervscrab.ivc.IvcProcessor;
+import com.quadro.games.invokervscrab.ivc.IvcSounds;
 import com.quadro.games.invokervscrab.ivc.mob.Crab;
 import com.quadro.games.invokervscrab.ivc.skill.SkillItem;
 import com.quadro.games.invokervscrab.ivc.skill.worker.MixSkill;
@@ -242,6 +243,19 @@ public class FightScreen extends AbstractIvcScreen {
         mProgressExp = new ProgressBar(0, 100, 1, false, barStyle);
         mProgressExp.setBounds(0, 00, viewportWidth, 20);
         mStage.addActor(mProgressExp);
+
+        SL.getSounds().loadSounds(new String[]{
+                IvcSounds.SKILL_USE_FAIL,
+        });
+
+        mProcessor.setOnSkillNotEnoughMp(new GameCallback() {
+
+            @Override
+            public void run(IvcProcessor game) {
+                SL.getSounds().play(IvcSounds.SKILL_USE_FAIL);
+            }
+
+        });
     }
 
     @Override
@@ -261,7 +275,6 @@ public class FightScreen extends AbstractIvcScreen {
         GameObjectState player = mProcessor.getPlayer();
 
         player.mCurrentHp = (int)(player.mMaxHp - 20 * (float)Math.random());
-        player.mCurrentMp = (int)(player.mMaxMp - 40 * (float)Math.random());
         player.mExperience = (int)(player.mExperience + Math.random() * 3) % 100;
 
         mProgressHp.setRange(0, player.mMaxHp);
