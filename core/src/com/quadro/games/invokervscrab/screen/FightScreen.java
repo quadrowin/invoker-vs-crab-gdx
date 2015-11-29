@@ -1,12 +1,14 @@
 package com.quadro.games.invokervscrab.screen;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
+import com.badlogic.gdx.scenes.scene2d.ui.ProgressBar;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
@@ -17,7 +19,9 @@ import com.quadro.games.invokervscrab.IvcGame;
 import com.quadro.games.invokervscrab.SL;
 import com.quadro.games.invokervscrab.ivc.BuffSlot;
 import com.quadro.games.invokervscrab.ivc.GameCallback;
+import com.quadro.games.invokervscrab.ivc.GameObjectState;
 import com.quadro.games.invokervscrab.ivc.IvcProcessor;
+import com.quadro.games.invokervscrab.ivc.mob.Crab;
 import com.quadro.games.invokervscrab.ivc.skill.SkillItem;
 import com.quadro.games.invokervscrab.ivc.skill.worker.MixSkill;
 import com.quadro.games.invokervscrab.ivc.skill.worker.MixedFirstSkill;
@@ -35,7 +39,6 @@ import com.quadro.games.invokervscrab.ivc.skill.worker.mixed.Result222;
 import com.quadro.games.invokervscrab.ivc.skill.worker.mixed.Result223;
 import com.quadro.games.invokervscrab.ivc.skill.worker.mixed.Result233;
 import com.quadro.games.invokervscrab.ivc.skill.worker.mixed.Result333;
-import com.quadro.games.invokervscrab.mob.Crab;
 import com.quadro.games.invokervscrab.style.EmptyDrawable;
 
 import java.util.ArrayList;
@@ -59,10 +62,19 @@ public class FightScreen extends AbstractIvcScreen {
 
     private final Map<String, ImageButton> mSkillToButton = new HashMap<String, ImageButton>();
 
+    private ProgressBar mProgressHp;
+
+    private ProgressBar mProgressMp;
+
+    private ProgressBar mProgressExp;
+
     public FightScreen(IvcGame game) {
         super(game);
 
-        mStage.setViewport(new FitViewport(400, 300));
+        int viewportWidth = 400;
+        int viewportHeight = 300;
+
+        mStage.setViewport(new FitViewport(viewportWidth, viewportHeight));
         mStage.getViewport().update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
 
         font = new BitmapFont();
@@ -159,7 +171,7 @@ public class FightScreen extends AbstractIvcScreen {
         for (Map.Entry<String, ImageButton> entry : mSkillToButton.entrySet()) {
             String skillClass = entry.getKey();
             ImageButton btn = entry.getValue();
-            btn.setUserObject(SL.getGame().getSkill(skillClass));
+            btn.setUserObject(mProcessor.getSkill(skillClass));
             btn.addListener(skillClickListener);
             mStage.addActor(btn);
         }
@@ -172,7 +184,7 @@ public class FightScreen extends AbstractIvcScreen {
         }
 
         // Миксованные скилы
-        SL.getGame().setOnMixedChange(new GameCallback() {
+        mProcessor.setOnMixedChange(new GameCallback() {
 
             @Override
             public void run(IvcProcessor game) {
@@ -197,13 +209,46 @@ public class FightScreen extends AbstractIvcScreen {
             }
 
         });
+
+        mProcessor.resetToStart();
+        GameObjectState player = mProcessor.getPlayer();
+
+        ProgressBar.ProgressBarStyle barStyle = new ProgressBar.ProgressBarStyle(
+                mSkin.newDrawable("button-up", Color.DARK_GRAY),
+                mSkin.newDrawable("button-up", Color.RED)
+        );
+        barStyle.knobBefore = barStyle.knob;
+
+        mProgressHp = new ProgressBar(0, player.mMaxHp, 1, false, barStyle);
+        mProgressHp.setBounds(0, 40, viewportWidth, 20);
+        mStage.addActor(mProgressHp);
+
+        barStyle = new ProgressBar.ProgressBarStyle(
+                mSkin.newDrawable("button-up", Color.DARK_GRAY),
+                mSkin.newDrawable("button-up", Color.BLUE)
+        );
+        barStyle.knobBefore = barStyle.knob;
+
+        mProgressMp = new ProgressBar(0, player.mMaxMp, 1, false, barStyle);
+        mProgressMp.setBounds(0, 20, viewportWidth, 20);
+        mStage.addActor(mProgressMp);
+
+        barStyle = new ProgressBar.ProgressBarStyle(
+                mSkin.newDrawable("button-down", Color.DARK_GRAY),
+                mSkin.newDrawable("button-down", Color.GREEN)
+        );
+        barStyle.knobBefore = barStyle.knob;
+
+        mProgressExp = new ProgressBar(0, 100, 1, false, barStyle);
+        mProgressExp.setBounds(0, 00, viewportWidth, 20);
+        mStage.addActor(mProgressExp);
     }
 
     @Override
     public void draw(float delta) {
         mStage.act(delta);
         mStage.draw();
-        mEnemy.draw(mStage.getCamera().projection);
+        mEnemy.draw(mStage.getBatch(), mStage.getCamera().projection);
     }
 
     @Override
@@ -213,11 +258,26 @@ public class FightScreen extends AbstractIvcScreen {
 
     @Override
     public void update(float delta) {
+        GameObjectState player = mProcessor.getPlayer();
 
+        player.mCurrentHp = (int)(player.mMaxHp - 20 * (float)Math.random());
+        player.mCurrentMp = (int)(player.mMaxMp - 40 * (float)Math.random());
+        player.mExperience = (int)(player.mExperience + Math.random() * 3) % 100;
+
+        mProgressHp.setRange(0, player.mMaxHp);
+        mProgressHp.setValue(player.mCurrentHp);
+
+        mProgressMp.setRange(0, player.mMaxMp);
+        mProgressMp.setValue(player.mCurrentMp);
+
+        mProgressExp.setRange(0, 100);
+        mProgressExp.setValue(player.mExperience);
     }
 
     private void updateQuestion() {
-
+        Drawable question = mSkin.getDrawable(mProcessor.getCurrentQuestion());
+        mEnemy.setQuestion(question);
+        mEnemy.randomize();
     }
 
 }

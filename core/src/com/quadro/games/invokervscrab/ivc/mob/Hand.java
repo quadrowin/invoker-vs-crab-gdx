@@ -1,4 +1,4 @@
-package com.quadro.games.invokervscrab.mob;
+package com.quadro.games.invokervscrab.ivc.mob;
 
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
@@ -17,27 +17,37 @@ public class Hand extends Part {
     @Override
     public void draw(ShapeRenderer sr) {
         sr.setColor(1, 0, 0, 1);
-//        RectF r = new RectF(
-//                mPosition[0] - 100 * mScale,
-//                mPosition[1] - 50 * mScale,
-//                mPosition[0] + 100 * mScale,
-//                mPosition[1] + 50 * mScale
-//        );
-//        if (mRight) {
+        sr.begin(ShapeRenderer.ShapeType.Filled);
+        if (mRight) {
 //            RectF sr = new RectF(r);
 //            sr.right -= 20 * mScale;
 //            cnv.rotate(-30, mPosition[0], mPosition[1]);
-//            cnv.drawArc(sr, (float) (Math.random() * 28), 180, false, paint);
+//            cnv.drawArc(sr, mRandom[0] * 28, 180, false, paint);
 //            cnv.drawArc(r, 180, 180, false, paint);
 //            sr.rotate(30, mPosition[0], mPosition[1]);
-//        } else {
+            sr.rotate(0, 0, 1, 30);
+            sr.scale(1.3f, 1, 1);
+            sr.arc(-10, 0, 50, mRandom[0] * 28, 180);
+            sr.arc(0, 0, 70, 180, 180);
+            sr.scale(1 / 1.3f, 1, 1);
+            sr.rotate(0, 0, 1, -30);
+        } else {
 //            RectF sr = new RectF(r);
 //            sr.left += 20 * mScale;
 //            cnv.rotate(30, mPosition[0], mPosition[1]);
-//            cnv.drawArc(sr, -30, 180 + (float) (Math.random() * 28), false, paint);
+//            cnv.drawArc(sr, -30, 180 + mRandom[0] * 28, false, paint);
 //            cnv.drawArc(r, 180, 180, false, paint);
 //            cnv.rotate(-30, mPosition[0], mPosition[1]);
-//        }
+
+
+            sr.rotate(0, 0, 1, -30);
+            sr.scale(1.3f, 1, 1);
+            sr.arc(0, 0, 50, -mRandom[0] * 28, 180);
+            sr.arc(0, 0, 60, 180, 180);
+            sr.scale(1 / 1.3f, 1, 1);
+            sr.rotate(0, 0, 1, 30);
+        }
+        sr.end();
     }
 
 }

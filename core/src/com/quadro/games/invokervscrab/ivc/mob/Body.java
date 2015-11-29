@@ -1,4 +1,4 @@
-package com.quadro.games.invokervscrab.mob;
+package com.quadro.games.invokervscrab.ivc.mob;
 
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
@@ -7,12 +7,9 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
  */
 public class Body extends Part {
 
-    private float mSizeX = 100;
-
-    private float mSizeY = 50;
-
     public Body(float x, float y, float scale) {
         super(x, y, scale);
+        mSize = new float[] {100, 50};
     }
 
     @Override
@@ -20,10 +17,10 @@ public class Body extends Part {
         sr.begin(ShapeRenderer.ShapeType.Filled);
         sr.setColor(1, 0, 0, 1);
         sr.ellipse(
-                -0.5f * mSizeX * mScale,
-                -0.5f * mSizeY * mScale,
-                mSizeX * mScale,
-                mSizeY * mScale
+                -0.5f * mSize[0],
+                -0.5f * mSize[1],
+                mSize[0],
+                mSize[1]
         );
         sr.end();
     }

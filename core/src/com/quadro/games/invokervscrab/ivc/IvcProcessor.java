@@ -55,6 +55,8 @@ public class IvcProcessor {
 
     private SkillItem[] mMixedSkills = new SkillItem[2];
 
+    private GameObjectState mPlayer = new GameObjectState();
+
     private String[] mMixedCodeSolver = new String[] {
             null,
             RuneFirstSkill.class.getName(),
@@ -144,7 +146,7 @@ public class IvcProcessor {
         }
     }
 
-    public com.quadro.games.invokervscrab.ivc.BuffSlot getBuff(int index) {
+    public BuffSlot getBuff(int index) {
         return index < mBuffs.size() ? mBuffs.get(index) : null;
     }
 
@@ -162,6 +164,10 @@ public class IvcProcessor {
      */
     public SkillItem[] getMixedSkills() {
         return mMixedSkills;
+    }
+
+    public GameObjectState getPlayer() {
+        return mPlayer;
     }
 
     public String[] getRuneHint() {
@@ -189,6 +195,18 @@ public class IvcProcessor {
     public void randomizeQuestion() {
         int ind = (int) Math.floor(Math.random() * mAllQuestions.length);
         mCurrentQuestion = mAllQuestions[ind];
+    }
+
+    /**
+     * Сброс до 1 лвла и начального состояния
+     */
+    public void resetToStart() {
+        mPlayer.mCurrentHp = mPlayer.mMaxHp = 511;
+        mPlayer.mRegenHp = 0.25f;
+        mPlayer.mCurrentMp = mPlayer.mMaxMp = 286;
+        mPlayer.mRegenMp = 0.01f;
+        mPlayer.mLevel = 1;
+        mPlayer.mExperience = 0;
     }
 
     public void setOnMixedChange(GameCallback callback) {

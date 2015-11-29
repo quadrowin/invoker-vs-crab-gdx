@@ -4,6 +4,8 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.quadro.games.invokervscrab.IvcGame;
+import com.quadro.games.invokervscrab.SL;
+import com.quadro.games.invokervscrab.ivc.IvcProcessor;
 
 /**
  * Created by Quadrowin on 27.11.2015.
@@ -14,8 +16,11 @@ public abstract class AbstractIvcScreen implements Screen {
 
     protected IvcGame mGame;
 
+    protected IvcProcessor mProcessor;
+
     public AbstractIvcScreen(IvcGame game) {
         mGame = game;
+        mProcessor = SL.getGame();
         mStage = new Stage();
         Gdx.input.setInputProcessor(mStage);
     }
