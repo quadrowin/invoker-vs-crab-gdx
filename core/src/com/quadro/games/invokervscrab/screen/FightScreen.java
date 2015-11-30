@@ -8,12 +8,14 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.ProgressBar;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable;
+import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.quadro.games.invokervscrab.IvcGame;
 import com.quadro.games.invokervscrab.SL;
@@ -40,6 +42,7 @@ import com.quadro.games.invokervscrab.ivc.skill.worker.mixed.Result222;
 import com.quadro.games.invokervscrab.ivc.skill.worker.mixed.Result223;
 import com.quadro.games.invokervscrab.ivc.skill.worker.mixed.Result233;
 import com.quadro.games.invokervscrab.ivc.skill.worker.mixed.Result333;
+import com.quadro.games.invokervscrab.style.ColorDrawable;
 import com.quadro.games.invokervscrab.style.EmptyDrawable;
 
 import java.util.ArrayList;
@@ -61,6 +64,10 @@ public class FightScreen extends AbstractIvcScreen {
 
     private final List<ImageButton> mBuffStack = new ArrayList<ImageButton>();
 
+    private final List<ImageButton> mHintBtns = new ArrayList<ImageButton>();
+
+    private ImageButton mHintPanel;
+
     private final Map<String, ImageButton> mSkillToButton = new HashMap<String, ImageButton>();
 
     private ProgressBar mProgressHp;
@@ -68,6 +75,16 @@ public class FightScreen extends AbstractIvcScreen {
     private ProgressBar mProgressMp;
 
     private ProgressBar mProgressExp;
+
+    private Label mLabelInvokeMpCost;
+
+    private Label mLabelCurrentHp;
+
+    private Label mLabelRegenHp;
+
+    private Label mLabelCurrentMp;
+
+    private Label mLabelRegenMp;
 
     public FightScreen(IvcGame game) {
         super(game);
@@ -108,7 +125,7 @@ public class FightScreen extends AbstractIvcScreen {
         textButtonStyle.down = mSkin.getDrawable("button-down");
 //        textButtonStyle.checked = skin.getDrawable("checked-button");
 
-        Drawable drawUp = new SpriteDrawable(mSkin.getSprite(RuneFirstSkill.class.getName()));
+        Drawable drawQuas = new SpriteDrawable(mSkin.getSprite(RuneFirstSkill.class.getName()));
         Drawable drawWex = new SpriteDrawable(mSkin.getSprite(RuneSecondSkill.class.getName()));
         Drawable drawExort = new SpriteDrawable(mSkin.getSprite(RuneThirdSkill.class.getName()));
         Drawable drawMix = new SpriteDrawable(mSkin.getSprite(MixSkill.class.getName()));
@@ -117,6 +134,7 @@ public class FightScreen extends AbstractIvcScreen {
 
             @Override
             public void clicked(InputEvent event, float x, float y) {
+                mHintPanel.setVisible(false);
                 SkillItem skill = (SkillItem) event.getListenerActor().getUserObject();
                 skill.use(SL.getGame());
 
@@ -139,7 +157,7 @@ public class FightScreen extends AbstractIvcScreen {
 
         };
 
-        ImageButton btnQuas = new ImageButton(drawUp, drawUp);
+        ImageButton btnQuas = new ImageButton(drawQuas, drawQuas);
         btnQuas.setBounds(0, 200, 50, 50);
         mSkillToButton.put(RuneFirstSkill.class.getName(), btnQuas);
 
@@ -154,6 +172,20 @@ public class FightScreen extends AbstractIvcScreen {
         TextButton btnHint = new TextButton("Hint", textButtonStyle);
         btnHint.setBounds(0, 260, 80, 40);
         mStage.addActor(btnHint);
+        btnHint.addListener(new ClickListener() {
+
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                Gdx.app.log(getClass().getName(), "hint click");
+                String[] hints = mProcessor.getRuneHint();
+                for (int i = 0; i < hints.length; i++) {
+                    Drawable dr = new SpriteDrawable(mSkin.getSprite(hints[i]));
+                    mHintBtns.get(i).getStyle().imageUp = dr;
+                }
+                mHintPanel.setVisible(true);
+            }
+
+        });
 
         final Drawable transparent = new EmptyDrawable();
 
@@ -168,6 +200,22 @@ public class FightScreen extends AbstractIvcScreen {
         ImageButton btnInvoke = new ImageButton(drawMix);
         btnInvoke.setBounds(350, 80, 50, 50);
         mSkillToButton.put(MixSkill.class.getName(), btnInvoke);
+        SkillItem invoke = mProcessor.getSkill(MixSkill.class.getName());
+        Label.LabelStyle mpCostLabelStyle = new Label.LabelStyle(font, Color.WHITE);
+        mpCostLabelStyle.background = new ColorDrawable(Color.BLUE);
+        mLabelInvokeMpCost = new Label(
+                Integer.toString((int)invoke.getInfo().getManaCost()),
+                mpCostLabelStyle
+        );
+        mLabelInvokeMpCost.setAlignment(Align.center, Align.center);
+        mLabelInvokeMpCost.setBounds(
+                btnInvoke.getWidth() * 2 / 3,
+                0,
+                btnInvoke.getWidth() / 3,
+                btnInvoke.getHeight() / 5
+        );
+        mLabelInvokeMpCost.setFontScale(0.4f);
+        btnInvoke.addActor(mLabelInvokeMpCost);
 
         for (Map.Entry<String, ImageButton> entry : mSkillToButton.entrySet()) {
             String skillClass = entry.getKey();
@@ -183,6 +231,18 @@ public class FightScreen extends AbstractIvcScreen {
             mBuffStack.add(buff);
             mStage.addActor(buff);
         }
+
+        mHintPanel = new ImageButton(new ColorDrawable(Color.BROWN));
+        mHintPanel.setBounds(100, 260, 200, 40);
+        mHintPanel.setVisible(false);
+
+        for (int i = 0; i < 3; i++) {
+            ImageButton hint = new ImageButton(new ColorDrawable(Color.CORAL));
+            hint.setBounds(i * 45, 0, 40, 40);
+            mHintBtns.add(hint);
+            mHintPanel.addActor(hint);
+        }
+        mStage.addActor(mHintPanel);
 
         // Миксованные скилы
         mProcessor.setOnMixedChange(new GameCallback() {
@@ -214,6 +274,7 @@ public class FightScreen extends AbstractIvcScreen {
         mProcessor.resetToStart();
         GameObjectState player = mProcessor.getPlayer();
 
+        // прогресс бар хп
         ProgressBar.ProgressBarStyle barStyle = new ProgressBar.ProgressBarStyle(
                 mSkin.newDrawable("button-up", Color.DARK_GRAY),
                 mSkin.newDrawable("button-up", Color.RED)
@@ -224,6 +285,32 @@ public class FightScreen extends AbstractIvcScreen {
         mProgressHp.setBounds(0, 40, viewportWidth, 20);
         mStage.addActor(mProgressHp);
 
+        // Цифры на хп
+        Label.LabelStyle hpLabelStyle = new Label.LabelStyle(font, Color.WHITE);
+        mLabelCurrentHp = new Label("100/100", hpLabelStyle);
+        mLabelCurrentHp.setAlignment(Align.center, Align.center);
+        mLabelCurrentHp.setBounds(
+                mProgressHp.getX(),
+                mProgressHp.getY(),
+                mProgressHp.getWidth(),
+                mProgressHp.getHeight()
+        );
+        mLabelCurrentHp.setFontScale(0.4f);
+        mStage.addActor(mLabelCurrentHp);
+
+        // Цифры реген хп
+        mLabelRegenHp = new Label("+0.3", hpLabelStyle);
+        mLabelRegenHp.setAlignment(Align.center, Align.right);
+        mLabelRegenHp.setBounds(
+                mProgressHp.getX(),
+                mProgressHp.getY(),
+                mProgressHp.getWidth(),
+                mProgressHp.getHeight()
+        );
+        mLabelRegenHp.setFontScale(0.4f);
+        mStage.addActor(mLabelRegenHp);
+
+        // прогресс бар маны
         barStyle = new ProgressBar.ProgressBarStyle(
                 mSkin.newDrawable("button-up", Color.DARK_GRAY),
                 mSkin.newDrawable("button-up", Color.BLUE)
@@ -240,13 +327,39 @@ public class FightScreen extends AbstractIvcScreen {
         );
         barStyle.knobBefore = barStyle.knob;
 
+        // Цифры на мп
+        mLabelCurrentMp = new Label("100/100", hpLabelStyle);
+        mLabelCurrentMp.setAlignment(Align.center, Align.center);
+        mLabelCurrentMp.setBounds(
+                mProgressMp.getX(),
+                mProgressMp.getY(),
+                mProgressMp.getWidth() * 0.99f,
+                mProgressMp.getHeight()
+        );
+        mLabelCurrentMp.setFontScale(0.4f);
+        mStage.addActor(mLabelCurrentMp);
+
+        // Цифры реген мп
+        mLabelRegenMp = new Label("+0.3", hpLabelStyle);
+        mLabelRegenMp.setAlignment(Align.center, Align.right);
+        mLabelRegenMp.setBounds(
+                mProgressMp.getX(),
+                mProgressMp.getY(),
+                mProgressMp.getWidth() * 0.99f,
+                mProgressMp.getHeight()
+        );
+        mLabelRegenMp.setFontScale(0.4f);
+        mStage.addActor(mLabelRegenMp);
+
+        // полшоесс бар опыта
         mProgressExp = new ProgressBar(0, 100, 1, false, barStyle);
-        mProgressExp.setBounds(0, 00, viewportWidth, 20);
+        mProgressExp.setBounds(0, 00, viewportWidth / 2, 20);
         mStage.addActor(mProgressExp);
 
         SL.getSounds().loadSounds(new String[]{
                 IvcSounds.SKILL_USE_FAIL,
         });
+
 
         mProcessor.setOnSkillNotEnoughMp(new GameCallback() {
 
@@ -279,9 +392,21 @@ public class FightScreen extends AbstractIvcScreen {
 
         mProgressHp.setRange(0, player.mMaxHp);
         mProgressHp.setValue(player.mCurrentHp);
+        mLabelCurrentHp.setText(
+                Integer.toString((int) player.mCurrentHp)
+                        + "/"
+                        + Integer.toString((int) player.mMaxHp)
+        );
+        updateRegenLabel(mLabelRegenHp, player.mRegenHp, player.mCurrentHp < player.mMaxHp);
 
         mProgressMp.setRange(0, player.mMaxMp);
         mProgressMp.setValue(player.mCurrentMp);
+        mLabelCurrentMp.setText(
+                Integer.toString((int) player.mCurrentMp)
+                        + "/"
+                        + Integer.toString((int) player.mMaxMp)
+        );
+        updateRegenLabel(mLabelRegenMp, player.mRegenMp, player.mCurrentMp < player.mMaxMp);
 
         mProgressExp.setRange(0, 100);
         mProgressExp.setValue(player.mExperience);
@@ -291,6 +416,19 @@ public class FightScreen extends AbstractIvcScreen {
         Drawable question = mSkin.getDrawable(mProcessor.getCurrentQuestion());
         mEnemy.setQuestion(question);
         mEnemy.randomize();
+    }
+
+    private void updateRegenLabel(Label label, float regen, boolean ltMax) {
+        if (!ltMax) {
+            mLabelRegenMp.setVisible(false);
+            return;
+        }
+        if (regen < 0.1) {
+            mLabelRegenMp.setText(String.format("+%.2f", regen));
+        } else {
+            mLabelRegenMp.setText(String.format("+%.1f", regen));
+        }
+        mLabelRegenMp.setVisible(true);
     }
 
 }

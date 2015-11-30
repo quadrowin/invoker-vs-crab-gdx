@@ -49,7 +49,7 @@ public class IvcProcessor {
             Result333.class.getName(),
     };
 
-    private List<com.quadro.games.invokervscrab.ivc.BuffSlot> mBuffs = new ArrayList<BuffSlot>();
+    private List<BuffSlot> mBuffs = new ArrayList<BuffSlot>();
 
     private String mCurrentQuestion = Result111.class.getName();
 
@@ -73,15 +73,15 @@ public class IvcProcessor {
         mSkills = new SkillItem[] {
                 // Руны
                 new SkillItem(
-                        new SkillInfo("Rune 1", "Use rune 1", 0),
+                        new SkillInfo("Rune Quas", "Use rune 1", 0),
                         new RuneFirstSkill()
                 ),
                 new SkillItem(
-                        new SkillInfo("Rune 2", "Use rune 2", 0),
+                        new SkillInfo("Rune Wex", "Use rune 2", 0),
                         new RuneSecondSkill()
                 ),
                 new SkillItem(
-                        new SkillInfo("Rune 3", "Use rune 3", 0),
+                        new SkillInfo("Rune Exort", "Use rune 3", 0),
                         new RuneThirdSkill()
                 ),
                 // Запуск замиксованных скилов
@@ -100,43 +100,43 @@ public class IvcProcessor {
                 ),
                 // Результаты миксования
                 new SkillItem(
-                        new SkillInfo("Mix 111", "Use 111 mixed", 0),
+                        new SkillInfo("Cold Snap", "Use 111 mixed", 100),
                         new Result111()
                 ),
                 new SkillItem(
-                        new SkillInfo("Mix 112", "Use 112 mixed", 0),
+                        new SkillInfo("Ghost Walk", "Use 112 mixed", 200),
                         new Result112()
                 ),
                 new SkillItem(
-                        new SkillInfo("Mix 113", "Use 113 mixed", 0),
+                        new SkillInfo("Ice Wall", "Use 113 mixed", 175),
                         new Result113()
                 ),
                 new SkillItem(
-                        new SkillInfo("Mix 122", "Use 122 mixed", 0),
+                        new SkillInfo("Tornado", "Use 122 mixed", 150),
                         new Result122()
                 ),
                 new SkillItem(
-                        new SkillInfo("Mix 123", "Use 123 mixed", 0),
+                        new SkillInfo("Deafening Blast", "Use 123 mixed", 200),
                         new Result123()
                 ),
                 new SkillItem(
-                        new SkillInfo("Mix 133", "Use 133 mixed", 0),
+                        new SkillInfo("Forge Spirit", "Use 133 mixed", 75),
                         new Result133()
                 ),
                 new SkillItem(
-                        new SkillInfo("Mix 222", "Use 222 mixed", 0),
+                        new SkillInfo("EMP", "Use 222 mixed", 125),
                         new Result222()
                 ),
                 new SkillItem(
-                        new SkillInfo("Mix 223", "Use 223 mixed", 0),
+                        new SkillInfo("Alacrity", "Use 223 mixed", 45),
                         new Result223()
                 ),
                 new SkillItem(
-                        new SkillInfo("Mix 233", "Use 233 mixed", 0),
+                        new SkillInfo("Chaos Meteor", "Use 233 mixed", 200),
                         new Result233()
                 ),
                 new SkillItem(
-                        new SkillInfo("Mix 333", "Use 333 mixed", 0),
+                        new SkillInfo("Sun Strike", "Use 333 mixed", 175),
                         new Result333()
                 ),
         };
@@ -152,7 +152,7 @@ public class IvcProcessor {
         return index < mBuffs.size() ? mBuffs.get(index) : null;
     }
 
-    public List<com.quadro.games.invokervscrab.ivc.BuffSlot> getBuffs() {
+    public List<BuffSlot> getBuffs() {
         return mBuffs;
     }
 
@@ -228,7 +228,7 @@ public class IvcProcessor {
         }
     }
 
-    public boolean tryUseMp(int mp) {
+    public boolean tryUseMp(float mp) {
         if (mPlayer.mCurrentMp < mp) {
             mOnSkillNotEnoughMp.run(this);
             return false;

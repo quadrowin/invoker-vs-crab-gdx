@@ -9,9 +9,9 @@ public class SkillInfo {
 
     private String mTitle;
 
-    private int mManaCost;
+    private float mManaCost;
 
-    public SkillInfo(String title, String description, int manaCost) {
+    public SkillInfo(String title, String description, float manaCost) {
         mTitle = title;
         mDescription = description;
         mManaCost = manaCost;
@@ -25,7 +25,7 @@ public class SkillInfo {
         return mTitle;
     }
 
-    public int getManaCost() {
+    public float getManaCost() {
         return mManaCost;
     }
 

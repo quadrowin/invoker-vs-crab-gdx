@@ -3,6 +3,7 @@ package com.quadro.games.invokervscrab.style;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 
 /**
@@ -12,12 +13,33 @@ public class ColorDrawable implements Drawable {
 
     private Color mColor;
 
-    private ShapeRenderer mRenderer = new ShapeRenderer();
+    private static final ShapeRenderer mRenderer = new ShapeRenderer();
+
+    private static Matrix4 mOriginalProjectionMatrix;
+
+    private static Matrix4 mOriginalTransformMatrix;
+
+    public ColorDrawable(Color color) {
+        mColor = color;
+        if (mOriginalProjectionMatrix == null) {
+            mOriginalProjectionMatrix = mRenderer.getProjectionMatrix();
+            mOriginalTransformMatrix = mRenderer.getTransformMatrix();
+        }
+    }
 
     @Override
     public void draw(Batch batch, float x, float y, float width, float height) {
+        batch.end();
+        mRenderer.setProjectionMatrix(batch.getProjectionMatrix());
+        mRenderer.setTransformMatrix(batch.getTransformMatrix());
 
+        mRenderer.begin(ShapeRenderer.ShapeType.Filled);
+        mRenderer.rect(x, y, width, height, mColor, mColor, mColor, mColor);
+        mRenderer.end();
 
+        batch.begin();
+//        mRenderer.setProjectionMatrix(mOriginalProjectionMatrix);
+//        mRenderer.setTransformMatrix(mOriginalTransformMatrix);
     }
 
     @Override

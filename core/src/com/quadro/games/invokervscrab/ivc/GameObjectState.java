@@ -8,17 +8,17 @@ import java.util.List;
  */
 public class GameObjectState {
 
-    public int mCurrentHp;
+    public float mCurrentHp;
 
-    public int mCurrentMp;
+    public float mCurrentMp;
 
-    public int mExperience;
+    public float mExperience;
 
     public int mLevel;
 
-    public int mMaxHp;
+    public float mMaxHp;
 
-    public int mMaxMp;
+    public float mMaxMp;
 
     public float mRegenHp;
 

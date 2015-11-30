@@ -1,9 +1,11 @@
 package com.quadro.games.invokervscrab.ivc.mob;
 
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
+import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable;
 
 /**
  * Created by Quadrowin on 24.11.2015.
@@ -46,26 +48,29 @@ public class Crab {
         ShapeRenderer sr = new ShapeRenderer();
         sr.setProjectionMatrix(m);
         sr.translate(mLeft, mBottom, 0);
+        Matrix4 startPartTr = sr.getTransformMatrix().cpy();
+//        Matrix4 startPartPr = sr.getProjectionMatrix().cpy();
         for (int i = 0; i < parts.length; i++) {
-            com.quadro.games.invokervscrab.ivc.mob.Part p = parts[i];
+            Part p = parts[i];
             sr.translate(p.getX(), p.getY(), 0);
             sr.scale(p.getScale(), p.getScale(), 1);
             p.draw(sr);
-            sr.scale(1 / p.getScale(), 1 / p.getScale(), 1);
-            sr.translate(-p.getX(), -p.getY(), 0);
+            sr.setTransformMatrix(startPartTr);
+//            sr.setProjectionMatrix(startPartPr);
         }
 
         if (mQuestion != null) {
+            Sprite spr = ((SpriteDrawable)mQuestion).getSprite();
             batch.begin();
             batch.setProjectionMatrix(m);
             float w = mBody.getWidth();
             float h = mBody.getHeight();
-            mQuestion.draw(
-                    batch,
-                    mLeft + mBody.getLeft() + w * 0.1f,
+            batch.draw(
+                    spr.getTexture(),
+                    mLeft + mBody.getLeft() + w * 0.15f,
                     mBottom + mBody.getBottom() + w * 0.1f,
-                    w - w * 0.2f,
-                    h - w * 0.2f
+                    w * 0.7f,
+                    h * 0.6f
             );
             batch.end();
         }
