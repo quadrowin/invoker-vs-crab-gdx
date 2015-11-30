@@ -223,6 +223,9 @@ public class IvcProcessor {
         if (mMixedSkills[index] == null) {
             return ;
         }
+        if (!tryUseMp(mMixedSkills[index].getInfo().getManaCost())) {
+            return ;
+        }
         if (mMixedSkills[index].getWorker().getClass().getName() == mCurrentQuestion) {
             randomizeQuestion();
         }

@@ -72,10 +72,6 @@ public class MixSkill extends AbstractSkill {
 
     @Override
     public void useSkill(IvcProcessor game, SkillItem skill) {
-        if (!game.tryUseMp(skill.getInfo().getManaCost())) {
-            return;
-        }
-
         List<BuffSlot> buffs = game.getBuffs();
         char[] sequence = {'0', '0', '0'};
         int foundBuffs = 0;

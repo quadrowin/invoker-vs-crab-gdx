@@ -30,6 +30,9 @@ public class SkillItem {
     }
 
     public void use(IvcProcessor game) {
+        if (!game.tryUseMp(mInfo.getManaCost())) {
+            return;
+        }
         mWorker.useSkill(game, this);
     }
 

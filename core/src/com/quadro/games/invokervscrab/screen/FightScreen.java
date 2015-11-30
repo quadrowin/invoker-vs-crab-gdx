@@ -76,8 +76,6 @@ public class FightScreen extends AbstractIvcScreen {
 
     private ProgressBar mProgressExp;
 
-    private Label mLabelInvokeMpCost;
-
     private Label mLabelCurrentHp;
 
     private Label mLabelRegenHp;
@@ -85,6 +83,10 @@ public class FightScreen extends AbstractIvcScreen {
     private Label mLabelCurrentMp;
 
     private Label mLabelRegenMp;
+
+    private Label mLabelFirstMixedMpCost;
+
+    private Label mLabelSecondMixedMpCost;
 
     public FightScreen(IvcGame game) {
         super(game);
@@ -136,6 +138,9 @@ public class FightScreen extends AbstractIvcScreen {
             public void clicked(InputEvent event, float x, float y) {
                 mHintPanel.setVisible(false);
                 SkillItem skill = (SkillItem) event.getListenerActor().getUserObject();
+
+                Gdx.app.log(getClass().getName(), "mana cost " + skill.getInfo().getManaCost());
+
                 skill.use(SL.getGame());
 
                 for (int i = 0; i < mBuffStack.size(); i++) {
@@ -188,34 +193,29 @@ public class FightScreen extends AbstractIvcScreen {
         });
 
         final Drawable transparent = new EmptyDrawable();
+        Label.LabelStyle mpCostLabelStyle = new Label.LabelStyle(font, Color.WHITE);
+        mpCostLabelStyle.background = new ColorDrawable(Color.BLUE);
 
+        // первый сложный скилл
         ImageButton btnFirstMixed = new ImageButton(transparent);
         btnFirstMixed.setBounds(350, 200, 50, 50);
         mSkillToButton.put(MixedFirstSkill.class.getName(), btnFirstMixed);
+        // мана кост первого сложного скила
+        mLabelFirstMixedMpCost = newMpCostLabel(0, mpCostLabelStyle, btnFirstMixed);
 
+        // второй сложный скил
         ImageButton btnSecondMixed = new ImageButton(transparent);
         btnSecondMixed.setBounds(350, 140, 50, 50);
         mSkillToButton.put(MixedSecondSkill.class.getName(), btnSecondMixed);
+        // мана кост второго сложного скила
+        mLabelSecondMixedMpCost = newMpCostLabel(0, mpCostLabelStyle, btnSecondMixed);
 
         ImageButton btnInvoke = new ImageButton(drawMix);
         btnInvoke.setBounds(350, 80, 50, 50);
         mSkillToButton.put(MixSkill.class.getName(), btnInvoke);
         SkillItem invoke = mProcessor.getSkill(MixSkill.class.getName());
-        Label.LabelStyle mpCostLabelStyle = new Label.LabelStyle(font, Color.WHITE);
-        mpCostLabelStyle.background = new ColorDrawable(Color.BLUE);
-        mLabelInvokeMpCost = new Label(
-                Integer.toString((int)invoke.getInfo().getManaCost()),
-                mpCostLabelStyle
-        );
-        mLabelInvokeMpCost.setAlignment(Align.center, Align.center);
-        mLabelInvokeMpCost.setBounds(
-                btnInvoke.getWidth() * 2 / 3,
-                0,
-                btnInvoke.getWidth() / 3,
-                btnInvoke.getHeight() / 5
-        );
-        mLabelInvokeMpCost.setFontScale(0.4f);
-        btnInvoke.addActor(mLabelInvokeMpCost);
+
+        newMpCostLabel(invoke.getInfo().getManaCost(), mpCostLabelStyle, btnInvoke);
 
         for (Map.Entry<String, ImageButton> entry : mSkillToButton.entrySet()) {
             String skillClass = entry.getKey();
@@ -254,17 +254,27 @@ public class FightScreen extends AbstractIvcScreen {
                 ImageButton btn1 = mSkillToButton.get(MixedFirstSkill.class.getName());
                 if (mixed[0] == null) {
                     btn1.getStyle().imageUp = transparent;
+                    mLabelFirstMixedMpCost.setVisible(false);
                 } else {
                     Drawable dr = new SpriteDrawable(mSkin.getSprite(mixed[0].getWorkerName()));
                     btn1.getStyle().imageUp = dr;
+                    mLabelFirstMixedMpCost.setText(
+                            Integer.toString((int) mixed[0].getInfo().getManaCost())
+                    );
+                    mLabelFirstMixedMpCost.setVisible(true);
                 }
 
                 ImageButton btn2 = mSkillToButton.get(MixedSecondSkill.class.getName());
                 if (mixed[1] == null) {
                     btn2.getStyle().imageUp = transparent;
+                    mLabelSecondMixedMpCost.setVisible(false);
                 } else {
                     Drawable dr = new SpriteDrawable(mSkin.getSprite(mixed[1].getWorkerName()));
                     btn2.getStyle().imageUp = dr;
+                    mLabelSecondMixedMpCost.setText(
+                            Integer.toString((int)mixed[1].getInfo().getManaCost())
+                    );
+                    mLabelSecondMixedMpCost.setVisible(true);
                 }
 
             }
@@ -378,6 +388,21 @@ public class FightScreen extends AbstractIvcScreen {
         mEnemy.draw(mStage.getBatch(), mStage.getCamera().projection);
     }
 
+    private Label newMpCostLabel(float manaCost, Label.LabelStyle style, ImageButton btn) {
+        Label lbl = new Label(Integer.toString((int)manaCost), style);
+        lbl.setVisible(manaCost > 0);
+        lbl.setAlignment(Align.center, Align.center);
+        lbl.setBounds(
+                btn.getWidth() * 2 / 3,
+                0,
+                btn.getWidth() / 3,
+                btn.getHeight() / 5
+        );
+        lbl.setFontScale(0.4f);
+        btn.addActor(lbl);
+        return lbl;
+    }
+
     @Override
     public void resize(int width, int height) {
         mStage.getViewport().update(width, height, true);
@@ -399,6 +424,7 @@ public class FightScreen extends AbstractIvcScreen {
         );
         updateRegenLabel(mLabelRegenHp, player.mRegenHp, player.mCurrentHp < player.mMaxHp);
 
+        player.mCurrentMp = Math.min(player.mMaxMp, player.mCurrentMp + player.mRegenMp * delta);
         mProgressMp.setRange(0, player.mMaxMp);
         mProgressMp.setValue(player.mCurrentMp);
         mLabelCurrentMp.setText(
