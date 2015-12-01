@@ -1,5 +1,7 @@
 package com.quadro.games.invokervscrab.ivc;
 
+import com.quadro.games.invokervscrab.ivc.effect.EffectItem;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -7,6 +9,16 @@ import java.util.List;
  * Created by Quadrowin on 29.11.2015.
  */
 public class GameObjectState {
+
+    /**
+     * Базовый реген ХП
+     */
+    public float mBaseHpRegen;
+
+    /**
+     * Базовый реген МП
+     */
+    public float mBaseMpRegen;
 
     public float mCurrentHp;
 
@@ -20,10 +32,16 @@ public class GameObjectState {
 
     public float mMaxMp;
 
+    /**
+     * Реген ХП на текущему тике
+     */
     public float mRegenHp;
 
+    /**
+     * Реген МП на текущем тике
+     */
     public float mRegenMp;
 
-    public List<BuffSlot> mBuffs = new ArrayList<BuffSlot>();
+    public List<EffectItem> mEffects = new ArrayList<EffectItem>();
 
 }

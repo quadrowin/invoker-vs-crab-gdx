@@ -1,10 +1,7 @@
 package com.quadro.games.invokervscrab.ivc;
 
-import com.quadro.games.invokervscrab.ivc.skill.SkillInfo;
 import com.quadro.games.invokervscrab.ivc.skill.SkillItem;
-import com.quadro.games.invokervscrab.ivc.skill.worker.MixSkill;
-import com.quadro.games.invokervscrab.ivc.skill.worker.MixedFirstSkill;
-import com.quadro.games.invokervscrab.ivc.skill.worker.MixedSecondSkill;
+import com.quadro.games.invokervscrab.ivc.skill.SkillLoader;
 import com.quadro.games.invokervscrab.ivc.skill.worker.RuneFirstSkill;
 import com.quadro.games.invokervscrab.ivc.skill.worker.RuneSecondSkill;
 import com.quadro.games.invokervscrab.ivc.skill.worker.RuneThirdSkill;
@@ -19,9 +16,7 @@ import com.quadro.games.invokervscrab.ivc.skill.worker.mixed.Result223;
 import com.quadro.games.invokervscrab.ivc.skill.worker.mixed.Result233;
 import com.quadro.games.invokervscrab.ivc.skill.worker.mixed.Result333;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -49,8 +44,6 @@ public class IvcProcessor {
             Result333.class.getName(),
     };
 
-    private List<BuffSlot> mBuffs = new ArrayList<BuffSlot>();
-
     private String mCurrentQuestion = Result111.class.getName();
 
     private SkillItem[] mMixedSkills = new SkillItem[2];
@@ -69,91 +62,14 @@ public class IvcProcessor {
     private GameCallback mOnSkillNotEnoughMp;
 
     public IvcProcessor() {
-
-        mSkills = new SkillItem[] {
-                // Руны
-                new SkillItem(
-                        new SkillInfo("Rune Quas", "Use rune 1", 0),
-                        new RuneFirstSkill()
-                ),
-                new SkillItem(
-                        new SkillInfo("Rune Wex", "Use rune 2", 0),
-                        new RuneSecondSkill()
-                ),
-                new SkillItem(
-                        new SkillInfo("Rune Exort", "Use rune 3", 0),
-                        new RuneThirdSkill()
-                ),
-                // Запуск замиксованных скилов
-                new SkillItem(
-                        new SkillInfo("Mixed 1", "Use mixed skill 1", 0),
-                        new MixedFirstSkill()
-                ),
-                new SkillItem(
-                        new SkillInfo("Mixed 2", "Use mixed skill 2", 0),
-                        new MixedSecondSkill()
-                ),
-                // Миксование
-                new SkillItem(
-                        new SkillInfo("Mix", "Mix runes", 20),
-                        new MixSkill()
-                ),
-                // Результаты миксования
-                new SkillItem(
-                        new SkillInfo("Cold Snap", "Use 111 mixed", 100),
-                        new Result111()
-                ),
-                new SkillItem(
-                        new SkillInfo("Ghost Walk", "Use 112 mixed", 200),
-                        new Result112()
-                ),
-                new SkillItem(
-                        new SkillInfo("Ice Wall", "Use 113 mixed", 175),
-                        new Result113()
-                ),
-                new SkillItem(
-                        new SkillInfo("Tornado", "Use 122 mixed", 150),
-                        new Result122()
-                ),
-                new SkillItem(
-                        new SkillInfo("Deafening Blast", "Use 123 mixed", 200),
-                        new Result123()
-                ),
-                new SkillItem(
-                        new SkillInfo("Forge Spirit", "Use 133 mixed", 75),
-                        new Result133()
-                ),
-                new SkillItem(
-                        new SkillInfo("EMP", "Use 222 mixed", 125),
-                        new Result222()
-                ),
-                new SkillItem(
-                        new SkillInfo("Alacrity", "Use 223 mixed", 45),
-                        new Result223()
-                ),
-                new SkillItem(
-                        new SkillInfo("Chaos Meteor", "Use 233 mixed", 200),
-                        new Result233()
-                ),
-                new SkillItem(
-                        new SkillInfo("Sun Strike", "Use 333 mixed", 175),
-                        new Result333()
-                ),
-        };
+        SkillLoader loader = new SkillLoader();
+        mSkills = loader.loadSkills();
         for (int i = 0; i < mSkills.length; i++) {
             mSkillsMap.put(
                     mSkills[i].getWorker().getClass().getName(),
                     mSkills[i]
             );
         }
-    }
-
-    public BuffSlot getBuff(int index) {
-        return index < mBuffs.size() ? mBuffs.get(index) : null;
-    }
-
-    public List<BuffSlot> getBuffs() {
-        return mBuffs;
     }
 
     public String getCurrentQuestion() {

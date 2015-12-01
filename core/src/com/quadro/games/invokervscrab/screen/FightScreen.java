@@ -19,13 +19,18 @@ import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.quadro.games.invokervscrab.IvcGame;
 import com.quadro.games.invokervscrab.SL;
-import com.quadro.games.invokervscrab.ivc.BuffSlot;
 import com.quadro.games.invokervscrab.ivc.GameCallback;
 import com.quadro.games.invokervscrab.ivc.GameObjectState;
 import com.quadro.games.invokervscrab.ivc.IvcProcessor;
 import com.quadro.games.invokervscrab.ivc.IvcSounds;
+import com.quadro.games.invokervscrab.ivc.effect.EffectItem;
+import com.quadro.games.invokervscrab.ivc.effect.worker.BottleEffect;
+import com.quadro.games.invokervscrab.ivc.effect.worker.RuneExortEffect;
+import com.quadro.games.invokervscrab.ivc.effect.worker.RuneQuasEffect;
+import com.quadro.games.invokervscrab.ivc.effect.worker.RuneWexEffect;
 import com.quadro.games.invokervscrab.ivc.mob.Crab;
 import com.quadro.games.invokervscrab.ivc.skill.SkillItem;
+import com.quadro.games.invokervscrab.ivc.skill.thing.BottleSkill;
 import com.quadro.games.invokervscrab.ivc.skill.worker.MixSkill;
 import com.quadro.games.invokervscrab.ivc.skill.worker.MixedFirstSkill;
 import com.quadro.games.invokervscrab.ivc.skill.worker.MixedSecondSkill;
@@ -121,6 +126,15 @@ public class FightScreen extends AbstractIvcScreen {
 
         mSkin.add(Result333.class.getName(), new Sprite(new Texture(Gdx.files.internal("data/skill/sun_strike.png"))));
 
+        // итемы
+        mSkin.add(BottleSkill.class.getName(), new Sprite(new Texture(Gdx.files.internal("data/thing/bottle_3.png"))));
+
+        // бафы
+        mSkin.add(BottleEffect.class.getName(), mSkin.getSprite(BottleSkill.class.getName()));
+        mSkin.add(RuneQuasEffect.class.getName(), mSkin.getSprite(RuneFirstSkill.class.getName()));
+        mSkin.add(RuneWexEffect.class.getName(), mSkin.getSprite(RuneSecondSkill.class.getName()));
+        mSkin.add(RuneExortEffect.class.getName(), mSkin.getSprite(RuneThirdSkill.class.getName()));
+
         textButtonStyle = new TextButton.TextButtonStyle();
         textButtonStyle.font = font;
         textButtonStyle.up = mSkin.getDrawable("button-up");
@@ -131,6 +145,10 @@ public class FightScreen extends AbstractIvcScreen {
         Drawable drawWex = new SpriteDrawable(mSkin.getSprite(RuneSecondSkill.class.getName()));
         Drawable drawExort = new SpriteDrawable(mSkin.getSprite(RuneThirdSkill.class.getName()));
         Drawable drawMix = new SpriteDrawable(mSkin.getSprite(MixSkill.class.getName()));
+
+        mSkin.add(RuneQuasEffect.class.getName(), drawQuas);
+        mSkin.add(RuneWexEffect.class.getName(), drawWex);
+        mSkin.add(RuneExortEffect.class.getName(), drawExort);
 
         ClickListener skillClickListener = new ClickListener() {
 
@@ -143,17 +161,21 @@ public class FightScreen extends AbstractIvcScreen {
 
                 skill.use(SL.getGame());
 
+                GameObjectState player = SL.getGame().getPlayer();
+
                 for (int i = 0; i < mBuffStack.size(); i++) {
                     ImageButton btn = mBuffStack.get(i);
-                    BuffSlot buff = SL.getGame().getBuff(i);
+                    EffectItem buff = i < player.mEffects.size()
+                            ? player.mEffects.get(i)
+                            : null;
 
                     if (buff == null) {
                         btn.setVisible(false);
                         continue;
                     }
 
-                    ImageButton btnSourceSkill = mSkillToButton.get(buff.getSourceSkill().getWorkerName());
-                    btn.setStyle(btnSourceSkill.getStyle());
+                    Drawable drawable = mSkin.getDrawable(buff.getWorkerName());
+                    btn.getStyle().imageUp = drawable;
                     btn.setVisible(true);
                 }
 
@@ -225,7 +247,7 @@ public class FightScreen extends AbstractIvcScreen {
             mStage.addActor(btn);
         }
 
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < 7; i++) {
             ImageButton buff = new ImageButton(transparent);
             buff.setBounds(60 + i * 25, 80, 20, 20);
             mBuffStack.add(buff);

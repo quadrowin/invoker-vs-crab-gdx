@@ -1,7 +1,10 @@
 package com.quadro.games.invokervscrab.ivc.skill.worker;
 
-import com.quadro.games.invokervscrab.ivc.BuffSlot;
 import com.quadro.games.invokervscrab.ivc.IvcProcessor;
+import com.quadro.games.invokervscrab.ivc.effect.EffectItem;
+import com.quadro.games.invokervscrab.ivc.effect.worker.RuneExortEffect;
+import com.quadro.games.invokervscrab.ivc.effect.worker.RuneQuasEffect;
+import com.quadro.games.invokervscrab.ivc.effect.worker.RuneWexEffect;
 import com.quadro.games.invokervscrab.ivc.skill.SkillItem;
 import com.quadro.games.invokervscrab.ivc.skill.worker.mixed.Result111;
 import com.quadro.games.invokervscrab.ivc.skill.worker.mixed.Result112;
@@ -65,18 +68,18 @@ public class MixSkill extends AbstractSkill {
 
         mSkillToClass.put("333", Result333.class.getName());
 
-        mBuffToSeq.put(RuneFirstSkill.class.getName(), '1');
-        mBuffToSeq.put(RuneSecondSkill.class.getName(), '2');
-        mBuffToSeq.put(RuneThirdSkill.class.getName(), '3');
+        mBuffToSeq.put(RuneQuasEffect.class.getName(), '1');
+        mBuffToSeq.put(RuneWexEffect.class.getName(), '2');
+        mBuffToSeq.put(RuneExortEffect.class.getName(), '3');
     }
 
     @Override
     public void useSkill(IvcProcessor game, SkillItem skill) {
-        List<BuffSlot> buffs = game.getBuffs();
+        List<EffectItem> buffs = game.getPlayer().mEffects;
         char[] sequence = {'0', '0', '0'};
         int foundBuffs = 0;
         for (int i = 0; i < buffs.size(); i++) {
-            String buffSkill = buffs.get(i).getSourceSkill().getWorker().getClass().getName();
+            String buffSkill = buffs.get(i).getWorkerName();
             Character buffChar = mBuffToSeq.get(buffSkill);
             if (buffChar != null) {
                 sequence[foundBuffs] = buffChar;
