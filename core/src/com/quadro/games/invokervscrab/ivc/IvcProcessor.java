@@ -1,5 +1,7 @@
 package com.quadro.games.invokervscrab.ivc;
 
+import com.badlogic.gdx.Gdx;
+import com.quadro.games.invokervscrab.ivc.effect.EffectItem;
 import com.quadro.games.invokervscrab.ivc.skill.SkillItem;
 import com.quadro.games.invokervscrab.ivc.skill.SkillLoader;
 import com.quadro.games.invokervscrab.ivc.skill.worker.RuneFirstSkill;
@@ -133,6 +135,43 @@ public class IvcProcessor {
 
     public void setOnSkillNotEnoughMp(GameCallback callback) {
         mOnSkillNotEnoughMp = callback;
+    }
+
+    public void tick(float delta) {
+        mPlayer.mRegenHp = mPlayer.mBaseHpRegen * delta;
+        mPlayer.mRegenMp = mPlayer.mBaseMpRegen * delta;
+
+        boolean effects_changed = false;
+        for (int i = 0; i < mPlayer.mEffects.size(); i++) {
+            EffectItem effect = mPlayer.mEffects.get(i);
+            float time_limit = effect.getTimeMax();
+            float time_delta = delta;
+            boolean effect_finish = false;
+            if (time_limit > 0) {
+                // временный баф
+                float time_left = Math.max(0, time_limit - effect.getTimeExists());
+                if (time_left < time_delta) {
+                    time_delta = time_left;
+                    effect_finish = true;
+                }
+            }
+            effect.tick(mPlayer, time_delta);
+            if (effect_finish) {
+                mPlayer.mEffects.remove(i);
+                i--;
+                effects_changed = true;
+            } else if (time_limit > 0) {
+                effect.incTimeExists(time_delta);
+            }
+        }
+
+        if (effects_changed) {
+            mPlayer.raiseEffectChange();
+            Gdx.app.log("effects count", mPlayer.mEffects.size() + "");
+        }
+
+        mPlayer.mCurrentHp = Math.min(mPlayer.mMaxHp, mPlayer.mCurrentHp + mPlayer.mRegenHp);
+        mPlayer.mCurrentMp = Math.min(mPlayer.mMaxMp, mPlayer.mCurrentMp + mPlayer.mRegenMp);
     }
 
     public void tryUseMixed(int index) {

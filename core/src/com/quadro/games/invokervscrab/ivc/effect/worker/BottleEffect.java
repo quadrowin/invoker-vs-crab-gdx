@@ -1,15 +1,27 @@
 package com.quadro.games.invokervscrab.ivc.effect.worker;
 
-import com.quadro.games.invokervscrab.ivc.IvcProcessor;
+import com.quadro.games.invokervscrab.ivc.GameObjectState;
+import com.quadro.games.invokervscrab.ivc.effect.EffectItem;
 
 /**
  * Created by Quadrowin on 01.12.2015.
  */
 public class BottleEffect extends AbstractEffect {
 
-    @Override
-    public void tick(IvcProcessor game, float delta) {
+    final private static float EFFECT_TIME = 5;
 
+    final private static float HP_PER_SEC = 10;
+
+    final private static float MP_PER_SEC = 10;
+
+    public void start(EffectItem effect) {
+        effect.setTimeMax(EFFECT_TIME);
+    }
+
+    @Override
+    public void tick(GameObjectState target, EffectItem effect, float delta) {
+        target.mRegenHp += HP_PER_SEC * delta;
+        target.mRegenMp += MP_PER_SEC * delta;
     }
 
 }

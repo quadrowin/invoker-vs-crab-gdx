@@ -61,7 +61,7 @@ abstract public class AbstractRuneSkill extends AbstractSkill {
             newBuff = new EffectItem(skill.getInfo(), newEffect());
         }
 
-        buffs.add(newBuff);
+        game.getPlayer().addEffect(newBuff);
     }
 
 }

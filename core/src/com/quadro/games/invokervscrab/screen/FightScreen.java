@@ -20,6 +20,7 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.quadro.games.invokervscrab.IvcGame;
 import com.quadro.games.invokervscrab.SL;
 import com.quadro.games.invokervscrab.ivc.GameCallback;
+import com.quadro.games.invokervscrab.ivc.GameObjectCallback;
 import com.quadro.games.invokervscrab.ivc.GameObjectState;
 import com.quadro.games.invokervscrab.ivc.IvcProcessor;
 import com.quadro.games.invokervscrab.ivc.IvcSounds;
@@ -107,48 +108,66 @@ public class FightScreen extends AbstractIvcScreen {
         buttonAtlas = new TextureAtlas(Gdx.files.internal("data/ui/button.pack"));
         mSkin.addRegions(buttonAtlas);
 
-        mSkin.add(RuneFirstSkill.class.getName(), new Sprite(new Texture(Gdx.files.internal("data/skill/quas.png"))));
-        mSkin.add(RuneSecondSkill.class.getName(), new Sprite(new Texture(Gdx.files.internal("data/skill/wex.png"))));
-        mSkin.add(RuneThirdSkill.class.getName(), new Sprite(new Texture(Gdx.files.internal("data/skill/exort.png"))));
-        mSkin.add(MixSkill.class.getName(), new Sprite(new Texture(Gdx.files.internal("data/skill/invoke.png"))));
+        String[] skillsFiles = new String[] {
+                RuneFirstSkill.class.getName(),     "data/skill/quas.png",
+                RuneSecondSkill.class.getName(),    "data/skill/wex.png",
+                RuneThirdSkill.class.getName(),     "data/skill/exort.png",
+                MixSkill.class.getName(),           "data/skill/invoke.png",
 
-        mSkin.add(Result111.class.getName(), new Sprite(new Texture(Gdx.files.internal("data/skill/cold_snap.png"))));
-        mSkin.add(Result112.class.getName(), new Sprite(new Texture(Gdx.files.internal("data/skill/ghost_walk.png"))));
-        mSkin.add(Result113.class.getName(), new Sprite(new Texture(Gdx.files.internal("data/skill/ice_wall.png"))));
+                Result111.class.getName(),          "data/skill/cold_snap.png",
+                Result112.class.getName(),          "data/skill/ghost_walk.png",
+                Result113.class.getName(),          "data/skill/ice_wall.png",
 
-        mSkin.add(Result122.class.getName(), new Sprite(new Texture(Gdx.files.internal("data/skill/tornado.png"))));
-        mSkin.add(Result123.class.getName(), new Sprite(new Texture(Gdx.files.internal("data/skill/deafening_blast.png"))));
-        mSkin.add(Result133.class.getName(), new Sprite(new Texture(Gdx.files.internal("data/skill/chaos_meteor.png"))));
+                Result122.class.getName(),          "data/skill/tornado.png",
+                Result123.class.getName(),          "data/skill/deafening_blast.png",
+                Result133.class.getName(),          "data/skill/chaos_meteor.png",
 
-        mSkin.add(Result222.class.getName(), new Sprite(new Texture(Gdx.files.internal("data/skill/emp.png"))));
-        mSkin.add(Result223.class.getName(), new Sprite(new Texture(Gdx.files.internal("data/skill/alacrity.png"))));
-        mSkin.add(Result233.class.getName(), new Sprite(new Texture(Gdx.files.internal("data/skill/forge_spirit.png"))));
+                Result222.class.getName(),          "data/skill/emp.png",
+                Result223.class.getName(),          "data/skill/alacrity.png",
+                Result233.class.getName(),          "data/skill/forge_spirit.png",
 
-        mSkin.add(Result333.class.getName(), new Sprite(new Texture(Gdx.files.internal("data/skill/sun_strike.png"))));
+                Result333.class.getName(),          "data/skill/sun_strike.png",
 
-        // итемы
-        mSkin.add(BottleSkill.class.getName(), new Sprite(new Texture(Gdx.files.internal("data/thing/bottle_3.png"))));
+                // итемы
+                BottleSkill.class.getName(),        "data/thing/bottle_3.png",
+        };
 
-        // бафы
-        mSkin.add(BottleEffect.class.getName(), mSkin.getSprite(BottleSkill.class.getName()));
-        mSkin.add(RuneQuasEffect.class.getName(), mSkin.getSprite(RuneFirstSkill.class.getName()));
-        mSkin.add(RuneWexEffect.class.getName(), mSkin.getSprite(RuneSecondSkill.class.getName()));
-        mSkin.add(RuneExortEffect.class.getName(), mSkin.getSprite(RuneThirdSkill.class.getName()));
+        for (int i = 0; i < skillsFiles.length; i += 2) {
+            String skillName = skillsFiles[i];
+
+            Texture texture = new Texture(Gdx.files.internal(skillsFiles[i + 1]));
+
+            Sprite sprite = new Sprite(texture);
+            mSkin.add(skillName, sprite);
+
+            Drawable drawable = new SpriteDrawable(sprite);
+            mSkin.add(skillName, drawable, Drawable.class);
+        }
+
+        String[] drawableSpriteCopy = new String[] {
+                // бафы
+                BottleEffect.class.getName(),       BottleSkill.class.getName(),
+                RuneQuasEffect.class.getName(),     RuneFirstSkill.class.getName(),
+                RuneWexEffect.class.getName(),      RuneSecondSkill.class.getName(),
+                RuneExortEffect.class.getName(),    RuneThirdSkill.class.getName(),
+        };
+        for (int i = 0; i < drawableSpriteCopy.length; i += 2) {
+            SpriteDrawable dr = (SpriteDrawable)mSkin.getDrawable(drawableSpriteCopy[i + 1]);
+            mSkin.add(drawableSpriteCopy[i], new SpriteDrawable(dr), Drawable.class);
+        }
+
+        mSkin.getDrawable( RuneQuasEffect.class.getName() );
+
+        Drawable drawQuas = mSkin.getDrawable(RuneFirstSkill.class.getName());
+        Drawable drawWex = mSkin.getDrawable(RuneSecondSkill.class.getName());
+        Drawable drawExort = mSkin.getDrawable(RuneThirdSkill.class.getName());
+        Drawable drawMix = mSkin.getDrawable(MixSkill.class.getName());
 
         textButtonStyle = new TextButton.TextButtonStyle();
         textButtonStyle.font = font;
         textButtonStyle.up = mSkin.getDrawable("button-up");
         textButtonStyle.down = mSkin.getDrawable("button-down");
 //        textButtonStyle.checked = skin.getDrawable("checked-button");
-
-        Drawable drawQuas = new SpriteDrawable(mSkin.getSprite(RuneFirstSkill.class.getName()));
-        Drawable drawWex = new SpriteDrawable(mSkin.getSprite(RuneSecondSkill.class.getName()));
-        Drawable drawExort = new SpriteDrawable(mSkin.getSprite(RuneThirdSkill.class.getName()));
-        Drawable drawMix = new SpriteDrawable(mSkin.getSprite(MixSkill.class.getName()));
-
-        mSkin.add(RuneQuasEffect.class.getName(), drawQuas);
-        mSkin.add(RuneWexEffect.class.getName(), drawWex);
-        mSkin.add(RuneExortEffect.class.getName(), drawExort);
 
         ClickListener skillClickListener = new ClickListener() {
 
@@ -161,8 +180,15 @@ public class FightScreen extends AbstractIvcScreen {
 
                 skill.use(SL.getGame());
 
-                GameObjectState player = SL.getGame().getPlayer();
+                updateQuestion();
+            }
 
+        };
+
+        mProcessor.getPlayer().setOnEffectChange(new GameObjectCallback() {
+
+            @Override
+            public void run(GameObjectState player) {
                 for (int i = 0; i < mBuffStack.size(); i++) {
                     ImageButton btn = mBuffStack.get(i);
                     EffectItem buff = i < player.mEffects.size()
@@ -178,13 +204,12 @@ public class FightScreen extends AbstractIvcScreen {
                     btn.getStyle().imageUp = drawable;
                     btn.setVisible(true);
                 }
-
-                updateQuestion();
             }
 
-        };
+        });
 
-        ImageButton btnQuas = new ImageButton(drawQuas, drawQuas);
+        // кнопки рун
+        ImageButton btnQuas = new ImageButton(drawQuas);
         btnQuas.setBounds(0, 200, 50, 50);
         mSkillToButton.put(RuneFirstSkill.class.getName(), btnQuas);
 
@@ -196,6 +221,12 @@ public class FightScreen extends AbstractIvcScreen {
         btnExort.setBounds(0, 80, 50, 50);
         mSkillToButton.put(RuneThirdSkill.class.getName(), btnExort);
 
+        // бутылка
+        ImageButton btnBottle = new ImageButton(mSkin.getDrawable(BottleSkill.class.getName()));
+        btnBottle.setBounds(55, 200, 50, 50);
+        mSkillToButton.put(BottleSkill.class.getName(), btnBottle);
+
+        // подсказка
         TextButton btnHint = new TextButton("Hint", textButtonStyle);
         btnHint.setBounds(0, 260, 80, 40);
         mStage.addActor(btnHint);
@@ -206,7 +237,7 @@ public class FightScreen extends AbstractIvcScreen {
                 Gdx.app.log(getClass().getName(), "hint click");
                 String[] hints = mProcessor.getRuneHint();
                 for (int i = 0; i < hints.length; i++) {
-                    Drawable dr = new SpriteDrawable(mSkin.getSprite(hints[i]));
+                    Drawable dr = mSkin.getDrawable(hints[i]);
                     mHintBtns.get(i).getStyle().imageUp = dr;
                 }
                 mHintPanel.setVisible(true);
@@ -278,7 +309,7 @@ public class FightScreen extends AbstractIvcScreen {
                     btn1.getStyle().imageUp = transparent;
                     mLabelFirstMixedMpCost.setVisible(false);
                 } else {
-                    Drawable dr = new SpriteDrawable(mSkin.getSprite(mixed[0].getWorkerName()));
+                    Drawable dr = mSkin.getDrawable(mixed[0].getWorkerName());
                     btn1.getStyle().imageUp = dr;
                     mLabelFirstMixedMpCost.setText(
                             Integer.toString((int) mixed[0].getInfo().getManaCost())
@@ -291,7 +322,7 @@ public class FightScreen extends AbstractIvcScreen {
                     btn2.getStyle().imageUp = transparent;
                     mLabelSecondMixedMpCost.setVisible(false);
                 } else {
-                    Drawable dr = new SpriteDrawable(mSkin.getSprite(mixed[1].getWorkerName()));
+                    Drawable dr = mSkin.getDrawable(mixed[1].getWorkerName());
                     btn2.getStyle().imageUp = dr;
                     mLabelSecondMixedMpCost.setText(
                             Integer.toString((int)mixed[1].getInfo().getManaCost())
@@ -433,8 +464,9 @@ public class FightScreen extends AbstractIvcScreen {
     @Override
     public void update(float delta) {
         GameObjectState player = mProcessor.getPlayer();
+        mProcessor.tick(delta);
 
-        player.mCurrentHp = (int)(player.mMaxHp - 20 * (float)Math.random());
+        player.mCurrentHp = player.mCurrentHp - (float)Math.random() * delta;
         player.mExperience = (int)(player.mExperience + Math.random() * 3) % 100;
 
         mProgressHp.setRange(0, player.mMaxHp);
@@ -444,9 +476,8 @@ public class FightScreen extends AbstractIvcScreen {
                         + "/"
                         + Integer.toString((int) player.mMaxHp)
         );
-        updateRegenLabel(mLabelRegenHp, player.mRegenHp, player.mCurrentHp < player.mMaxHp);
+        updateRegenLabel(mLabelRegenHp, player.mRegenHp / delta, player.mCurrentHp < player.mMaxHp);
 
-        player.mCurrentMp = Math.min(player.mMaxMp, player.mCurrentMp + player.mRegenMp * delta);
         mProgressMp.setRange(0, player.mMaxMp);
         mProgressMp.setValue(player.mCurrentMp);
         mLabelCurrentMp.setText(
@@ -454,7 +485,7 @@ public class FightScreen extends AbstractIvcScreen {
                         + "/"
                         + Integer.toString((int) player.mMaxMp)
         );
-        updateRegenLabel(mLabelRegenMp, player.mRegenMp, player.mCurrentMp < player.mMaxMp);
+        updateRegenLabel(mLabelRegenMp, player.mRegenMp / delta, player.mCurrentMp < player.mMaxMp);
 
         mProgressExp.setRange(0, 100);
         mProgressExp.setValue(player.mExperience);
@@ -468,15 +499,15 @@ public class FightScreen extends AbstractIvcScreen {
 
     private void updateRegenLabel(Label label, float regen, boolean ltMax) {
         if (!ltMax) {
-            mLabelRegenMp.setVisible(false);
+            label.setVisible(false);
             return;
         }
         if (regen < 0.1) {
-            mLabelRegenMp.setText(String.format("+%.2f", regen));
+            label.setText(String.format("+%.2f", regen));
         } else {
-            mLabelRegenMp.setText(String.format("+%.1f", regen));
+            label.setText(String.format("+%.1f", regen));
         }
-        mLabelRegenMp.setVisible(true);
+        label.setVisible(true);
     }
 
 }

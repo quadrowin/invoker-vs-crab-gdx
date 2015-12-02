@@ -44,4 +44,22 @@ public class GameObjectState {
 
     public List<EffectItem> mEffects = new ArrayList<EffectItem>();
 
+    private GameObjectCallback mOnEffectChange;
+
+    public void addEffect(EffectItem effect) {
+        mEffects.add(effect);
+        effect.getWorker().start(effect);
+        raiseEffectChange();
+    }
+
+    public void raiseEffectChange() {
+        if (mOnEffectChange != null) {
+            mOnEffectChange.run(this);
+        }
+    }
+
+    public void setOnEffectChange(GameObjectCallback callback) {
+        mOnEffectChange = callback;
+    }
+
 }
