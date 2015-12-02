@@ -22,8 +22,13 @@ public class Crab {
 
     private float mBottom = 20;
 
-    public Crab() {
+    private ShapeRenderer mRenderer = new ShapeRenderer();
 
+    private final Matrix4 mTransformMatrixBuffer = new Matrix4();
+
+    private final Matrix4 mRenderTransformMatrix = new Matrix4();
+
+    public Crab() {
         mBody = new Body(0, 0, 1.5f);
 
         parts = new Part[] {
@@ -44,25 +49,25 @@ public class Crab {
         };
     }
 
-    public void draw(Batch batch, Matrix4 m) {
-        ShapeRenderer sr = new ShapeRenderer();
-        sr.setProjectionMatrix(m);
-        sr.translate(mLeft, mBottom, 0);
-        Matrix4 startPartTr = sr.getTransformMatrix().cpy();
-//        Matrix4 startPartPr = sr.getProjectionMatrix().cpy();
+    public void draw(Batch batch, Matrix4 projection) {
+        mRenderer.setProjectionMatrix(projection);
+        mRenderer.setTransformMatrix(mRenderTransformMatrix);
+        mRenderer.translate(mLeft, mBottom, 0);
+        mTransformMatrixBuffer.set(mRenderer.getTransformMatrix());
+//        Matrix4 startPartPr = mRenderer.getProjectionMatrix().cpy();
         for (int i = 0; i < parts.length; i++) {
             Part p = parts[i];
-            sr.translate(p.getX(), p.getY(), 0);
-            sr.scale(p.getScale(), p.getScale(), 1);
-            p.draw(sr);
-            sr.setTransformMatrix(startPartTr);
-//            sr.setProjectionMatrix(startPartPr);
+            mRenderer.translate(p.getX(), p.getY(), 0);
+            mRenderer.scale(p.getScale(), p.getScale(), 1);
+            p.draw(mRenderer);
+            mRenderer.setTransformMatrix(mTransformMatrixBuffer);
+//            mRenderer.setProjectionMatrix(startPartPr);
         }
 
         if (mQuestion != null) {
             Sprite spr = ((SpriteDrawable)mQuestion).getSprite();
             batch.begin();
-            batch.setProjectionMatrix(m);
+            batch.setProjectionMatrix(projection);
             float w = mBody.getWidth();
             float h = mBody.getHeight();
             batch.draw(
