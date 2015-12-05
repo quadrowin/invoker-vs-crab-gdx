@@ -48,7 +48,7 @@ import com.quadro.games.invokervscrab.ivc.skill.worker.mixed.Result223;
 import com.quadro.games.invokervscrab.ivc.skill.worker.mixed.Result233;
 import com.quadro.games.invokervscrab.ivc.skill.worker.mixed.Result333;
 import com.quadro.games.invokervscrab.view.ColorDrawable;
-import com.quadro.games.invokervscrab.view.CrabRenderer;
+import com.quadro.games.invokervscrab.view.CrabView;
 import com.quadro.games.invokervscrab.view.EmptyDrawable;
 
 import java.util.ArrayList;
@@ -68,7 +68,7 @@ public class FightScreen extends AbstractIvcScreen {
 
     private final List<ImageButton> mBuffStack = new ArrayList<ImageButton>();
 
-    private CrabRenderer mEnemyView;
+    private CrabView mEnemyView;
 
     private final List<ImageButton> mHintBtns = new ArrayList<ImageButton>();
 
@@ -431,12 +431,13 @@ public class FightScreen extends AbstractIvcScreen {
 
         });
 
-        mEnemyView = new CrabRenderer(mProcessor.getEnemy());
+        mEnemyView = new CrabView(mProcessor.getEnemy());
 
         mProcessor.setOnEnemyChange(new GameCallback() {
 
             @Override
             public void run(IvcProcessor game) {
+                mEnemyView.startDeathAnimation();
                 updateEnemyView();
             }
 
@@ -449,7 +450,7 @@ public class FightScreen extends AbstractIvcScreen {
     public void draw(float delta) {
         mStage.act(delta);
         mStage.draw();
-        mEnemyView.draw(mStage.getBatch(), mStage.getCamera().projection);
+        mEnemyView.draw(mStage, delta);
     }
 
     private Label newMpCostLabel(float manaCost, Label.LabelStyle style, ImageButton btn) {

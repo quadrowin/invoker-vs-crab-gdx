@@ -1,11 +1,11 @@
-package com.quadro.games.invokervscrab.view.CrabView;
+package com.quadro.games.invokervscrab.view.CrabPart;
 
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
 /**
  * Created by Quadrowin on 24.11.2015.
  */
-public class Body extends Part {
+public class Body extends AbstractPart {
 
     public Body(float x, float y, float scale) {
         super(x, y, scale);

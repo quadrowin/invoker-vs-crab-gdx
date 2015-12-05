@@ -1,11 +1,11 @@
-package com.quadro.games.invokervscrab.view.CrabView;
+package com.quadro.games.invokervscrab.view.CrabPart;
 
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
 /**
  * Created by Quadrowin on 24.11.2015.
  */
-public class Foot extends Part {
+public class Foot extends AbstractPart {
 
     private boolean mRight = false;
 

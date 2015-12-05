@@ -1,11 +1,11 @@
-package com.quadro.games.invokervscrab.view.CrabView;
+package com.quadro.games.invokervscrab.view.CrabPart;
 
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
 /**
  * Created by Quadrowin on 24.11.2015.
  */
-public class Eye extends Part {
+public class Eye extends AbstractPart {
 
     private float mRadiusOuter = 40;
 

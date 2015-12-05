@@ -1,11 +1,11 @@
-package com.quadro.games.invokervscrab.view.CrabView;
+package com.quadro.games.invokervscrab.view.CrabPart;
 
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
 /**
  * Created by Quadrowin on 24.11.2015.
  */
-abstract public class Part {
+abstract public class AbstractPart {
 
     private float[] mPosition;
 
@@ -15,7 +15,7 @@ abstract public class Part {
 
     protected float[] mSize;
 
-    public Part(float x, float y, float scale) {
+    public AbstractPart(float x, float y, float scale) {
         mPosition = new float[] {x, y};
         mScale = scale;
         mRandom = new float[] {0, 0};
