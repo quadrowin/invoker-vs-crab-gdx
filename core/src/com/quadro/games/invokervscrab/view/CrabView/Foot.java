@@ -1,4 +1,4 @@
-package com.quadro.games.invokervscrab.ivc.mob;
+package com.quadro.games.invokervscrab.view.CrabView;
 
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 

@@ -29,7 +29,6 @@ import com.quadro.games.invokervscrab.ivc.effect.worker.BottleEffect;
 import com.quadro.games.invokervscrab.ivc.effect.worker.RuneExortEffect;
 import com.quadro.games.invokervscrab.ivc.effect.worker.RuneQuasEffect;
 import com.quadro.games.invokervscrab.ivc.effect.worker.RuneWexEffect;
-import com.quadro.games.invokervscrab.ivc.mob.Crab;
 import com.quadro.games.invokervscrab.ivc.skill.SkillItem;
 import com.quadro.games.invokervscrab.ivc.skill.thing.BottleSkill;
 import com.quadro.games.invokervscrab.ivc.skill.worker.MixSkill;
@@ -48,8 +47,9 @@ import com.quadro.games.invokervscrab.ivc.skill.worker.mixed.Result222;
 import com.quadro.games.invokervscrab.ivc.skill.worker.mixed.Result223;
 import com.quadro.games.invokervscrab.ivc.skill.worker.mixed.Result233;
 import com.quadro.games.invokervscrab.ivc.skill.worker.mixed.Result333;
-import com.quadro.games.invokervscrab.style.ColorDrawable;
-import com.quadro.games.invokervscrab.style.EmptyDrawable;
+import com.quadro.games.invokervscrab.view.ColorDrawable;
+import com.quadro.games.invokervscrab.view.CrabRenderer;
+import com.quadro.games.invokervscrab.view.EmptyDrawable;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -61,14 +61,14 @@ import java.util.Map;
  */
 public class FightScreen extends AbstractIvcScreen {
 
-    private Crab mEnemy = new Crab();
-
     private TextButton.TextButtonStyle textButtonStyle;
     private BitmapFont font;
     private Skin mSkin;
     private TextureAtlas buttonAtlas;
 
     private final List<ImageButton> mBuffStack = new ArrayList<ImageButton>();
+
+    private CrabRenderer mEnemyView;
 
     private final List<ImageButton> mHintBtns = new ArrayList<ImageButton>();
 
@@ -179,8 +179,6 @@ public class FightScreen extends AbstractIvcScreen {
                 Gdx.app.log(getClass().getName(), "mana cost " + skill.getInfo().getManaCost());
 
                 skill.use(SL.getGame());
-
-                updateQuestion();
             }
 
         };
@@ -432,13 +430,26 @@ public class FightScreen extends AbstractIvcScreen {
             }
 
         });
+
+        mEnemyView = new CrabRenderer(mProcessor.getEnemy());
+
+        mProcessor.setOnEnemyChange(new GameCallback() {
+
+            @Override
+            public void run(IvcProcessor game) {
+                updateEnemyView();
+            }
+
+        });
+
+        updateEnemyView();
     }
 
     @Override
     public void draw(float delta) {
         mStage.act(delta);
         mStage.draw();
-        mEnemy.draw(mStage.getBatch(), mStage.getCamera().projection);
+        mEnemyView.draw(mStage.getBatch(), mStage.getCamera().projection);
     }
 
     private Label newMpCostLabel(float manaCost, Label.LabelStyle style, ImageButton btn) {
@@ -464,7 +475,7 @@ public class FightScreen extends AbstractIvcScreen {
     @Override
     public void update(float delta) {
         GameObjectState player = mProcessor.getPlayer();
-        mProcessor.tick(delta);
+        mProcessor.update(delta);
 
         player.mCurrentHp = player.mCurrentHp - (float)Math.random() * delta;
         player.mExperience = (int)(player.mExperience + Math.random() * 3) % 100;
@@ -491,10 +502,10 @@ public class FightScreen extends AbstractIvcScreen {
         mProgressExp.setValue(player.mExperience);
     }
 
-    private void updateQuestion() {
-        Drawable question = mSkin.getDrawable(mProcessor.getCurrentQuestion());
-        mEnemy.setQuestion(question);
-        mEnemy.randomize();
+    private void updateEnemyView() {
+        Drawable question = mSkin.getDrawable(mProcessor.getEnemy().getQuestion());
+        mEnemyView.setQuestion(question);
+        mEnemyView.randomize();
     }
 
     private void updateRegenLabel(Label label, float regen, boolean ltMax) {

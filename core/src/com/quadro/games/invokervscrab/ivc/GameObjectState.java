@@ -62,4 +62,8 @@ public class GameObjectState {
         mOnEffectChange = callback;
     }
 
+    public void takeDamage(float damage) {
+        mCurrentHp = Math.max(0, mCurrentHp - damage);
+    }
+
 }
