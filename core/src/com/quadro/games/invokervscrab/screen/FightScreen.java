@@ -4,9 +4,11 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.NinePatch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.ProgressBar;
@@ -14,6 +16,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
+import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.FitViewport;
@@ -144,6 +147,21 @@ public class FightScreen extends AbstractIvcScreen {
             mSkin.add(skillName, drawable, Drawable.class);
         }
 
+        String[] uiTextures = new String[] {
+                // ui
+                "ui-button-down-32",               "data/ui/button32-down.png",
+                "ui-button-up-32",                 "data/ui/button32-up.png",
+
+                "ui-button-down-64",                "data/ui/button64-down.png",
+                "ui-button-up-64",                  "data/ui/button64-up.png",
+
+                "ui-button-hint-text",              "data/ui/button-hint-text.png",
+        };
+        for (int i = 0; i < uiTextures.length; i += 2) {
+            Texture texture = new Texture(Gdx.files.internal(uiTextures[i + 1]));
+            mSkin.add(uiTextures[i], texture);
+        }
+
         String[] drawableSpriteCopy = new String[] {
                 // бафы
                 BottleEffect.class.getName(),       BottleSkill.class.getName(),
@@ -163,10 +181,36 @@ public class FightScreen extends AbstractIvcScreen {
         Drawable drawExort = mSkin.getDrawable(RuneThirdSkill.class.getName());
         Drawable drawMix = mSkin.getDrawable(MixSkill.class.getName());
 
-        textButtonStyle = new TextButton.TextButtonStyle();
-        textButtonStyle.font = font;
-        textButtonStyle.up = mSkin.getDrawable("button-up");
-        textButtonStyle.down = mSkin.getDrawable("button-down");
+        NinePatch patchUp = new NinePatch(
+                mSkin.get("ui-button-up-64", Texture.class),
+                16, 16, 16, 16
+        );
+
+        NinePatch patchDown = new NinePatch(
+                mSkin.get("ui-button-down-64", Texture.class),
+                16, 16, 16, 16
+        );
+
+        mSkin.add(
+                "ui-button-up-64",
+                new NinePatchDrawable(patchUp),
+                Drawable.class
+        );
+        mSkin.add(
+                "ui-button-down-64",
+                new NinePatchDrawable(patchDown),
+                Drawable.class
+        );
+
+        textButtonStyle = new TextButton.TextButtonStyle(
+                mSkin.getDrawable("ui-button-up-64"),
+                mSkin.getDrawable("ui-button-down-64"),
+                null,
+                font
+        );
+//        textButtonStyle.font = font;
+//        textButtonStyle.up = mSkin.getDrawable("ui-button-up");
+//        textButtonStyle.down = mSkin.getDrawable("ui-button-down");
 //        textButtonStyle.checked = skin.getDrawable("checked-button");
 
         ClickListener skillClickListener = new ClickListener() {
@@ -225,8 +269,14 @@ public class FightScreen extends AbstractIvcScreen {
         mSkillToButton.put(BottleSkill.class.getName(), btnBottle);
 
         // подсказка
-        TextButton btnHint = new TextButton("Hint", textButtonStyle);
+        TextButton btnHint = new TextButton("", textButtonStyle);
         btnHint.setBounds(0, 260, 80, 40);
+
+        // текст на подсказке
+        Image imgHintLabel = new Image(mSkin.get("ui-button-hint-text", Texture.class));
+        imgHintLabel.setBounds(10, 10, 60, 20);
+        btnHint.addActor(imgHintLabel);
+
         mStage.addActor(btnHint);
         btnHint.addListener(new ClickListener() {
 
