@@ -14,6 +14,8 @@ public class IvcSounds {
 
     public static final String SKILL_USE_FAIL = "skill_use_fail.ogg";
 
+    public static final String LEVEL_UP = "level_up.ogg";
+
     private HashMap<String, Sound> mLoaded = new HashMap<String, Sound>();
 
     public void loadSounds(String[] names) {

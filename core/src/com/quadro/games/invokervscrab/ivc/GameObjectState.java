@@ -1,5 +1,6 @@
 package com.quadro.games.invokervscrab.ivc;
 
+import com.quadro.games.invokervscrab.SL;
 import com.quadro.games.invokervscrab.ivc.effect.EffectItem;
 
 import java.util.ArrayList;
@@ -24,7 +25,7 @@ public class GameObjectState {
 
     public float mCurrentMp;
 
-    public float mExperience;
+    private int mExperience;
 
     public int mLevel;
 
@@ -45,11 +46,28 @@ public class GameObjectState {
     public List<EffectItem> mEffects = new ArrayList<EffectItem>();
 
     private GameObjectCallback mOnEffectChange;
+    private GameObjectCallback mOnLevelUp;
 
     public void addEffect(EffectItem effect) {
         mEffects.add(effect);
         effect.getWorker().start(effect);
         raiseEffectChange();
+    }
+
+    public void incExperience(int delta) {
+        mExperience += delta;
+        LevelParams level = SL.getGame().getLeveling().getParams(mLevel);
+        if (mExperience - level.getStartExp() < level.getExpToUp()) {
+            return;
+        }
+
+        // lvl up
+        mLevel++;
+        mOnLevelUp.run(this);
+    }
+
+    public int getExperience() {
+        return mExperience;
     }
 
     public void raiseEffectChange() {
@@ -58,8 +76,16 @@ public class GameObjectState {
         }
     }
 
+    public void setExperience(int exp) {
+        mExperience = exp;
+    }
+
     public void setOnEffectChange(GameObjectCallback callback) {
         mOnEffectChange = callback;
+    }
+
+    public void setOnLevelUp(GameObjectCallback cb) {
+        mOnLevelUp = cb;
     }
 
     public void takeDamage(float damage) {

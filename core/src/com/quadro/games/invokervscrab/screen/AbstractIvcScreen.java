@@ -2,7 +2,9 @@ package com.quadro.games.invokervscrab.screen;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.quadro.games.invokervscrab.IvcGame;
 import com.quadro.games.invokervscrab.SL;
 import com.quadro.games.invokervscrab.ivc.IvcProcessor;
@@ -18,11 +20,39 @@ public abstract class AbstractIvcScreen implements Screen {
 
     protected IvcProcessor mProcessor;
 
+    protected Skin mSkin;
+
+    /**
+     * Размер пикселя
+     */
+    protected float mPx = 2;
+
     public AbstractIvcScreen(IvcGame game) {
         mGame = game;
         mProcessor = SL.getGame();
         mStage = new Stage();
         Gdx.input.setInputProcessor(mStage);
+    }
+
+    /**
+     * Добавление контрола на скрин с учетом размера пикселя
+     * @param actor
+     * @param x
+     * @param y
+     * @param width
+     * @param height
+     */
+    public void addStageBounds(Actor actor, float x, float y, float width, float height) {
+        actor.setBounds(x * mPx, y * mPx, width * mPx, height * mPx);
+        mStage.addActor(actor);
+    }
+
+    public Skin getSkin() {
+        return mSkin;
+    }
+
+    public Stage getStage() {
+        return mStage;
     }
 
     /** Called when a screen should render itself */

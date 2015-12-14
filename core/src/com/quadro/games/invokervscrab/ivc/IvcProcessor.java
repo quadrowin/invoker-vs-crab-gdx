@@ -29,6 +29,8 @@ public class IvcProcessor {
 
     private Crab mEnemy = new Crab();
 
+    private Leveling mLeveling = new Leveling();
+
     private SkillItem[] mSkills;
 
     private Map<String, SkillItem> mSkillsMap = new HashMap<String, SkillItem>();
@@ -91,6 +93,10 @@ public class IvcProcessor {
         return mEnemy;
     }
 
+    public Leveling getLeveling() {
+        return mLeveling;
+    }
+
     /**
      * Слоты со смиксованными скиллами
      * @return
@@ -142,7 +148,7 @@ public class IvcProcessor {
         mPlayer.mCurrentMp = mPlayer.mMaxMp = 286;
         mPlayer.mRegenMp = 0.01f;
         mPlayer.mLevel = 1;
-        mPlayer.mExperience = 0;
+        mPlayer.setExperience(0);
     }
 
     public void setOnEnemyChange(GameCallback callback) {

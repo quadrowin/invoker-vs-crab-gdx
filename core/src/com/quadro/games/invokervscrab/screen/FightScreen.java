@@ -7,11 +7,11 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.NinePatch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.ProgressBar;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
@@ -50,6 +50,9 @@ import com.quadro.games.invokervscrab.ivc.skill.worker.mixed.Result222;
 import com.quadro.games.invokervscrab.ivc.skill.worker.mixed.Result223;
 import com.quadro.games.invokervscrab.ivc.skill.worker.mixed.Result233;
 import com.quadro.games.invokervscrab.ivc.skill.worker.mixed.Result333;
+import com.quadro.games.invokervscrab.screen.FightControl.ExpBar;
+import com.quadro.games.invokervscrab.screen.FightControl.HpBar;
+import com.quadro.games.invokervscrab.screen.FightControl.MpBar;
 import com.quadro.games.invokervscrab.view.ColorDrawable;
 import com.quadro.games.invokervscrab.view.CrabView;
 import com.quadro.games.invokervscrab.view.EmptyDrawable;
@@ -66,7 +69,6 @@ public class FightScreen extends AbstractIvcScreen {
 
     private TextButton.TextButtonStyle textButtonStyle;
     private BitmapFont font;
-    private Skin mSkin;
     private TextureAtlas buttonAtlas;
 
     private final List<ImageButton> mBuffStack = new ArrayList<ImageButton>();
@@ -79,35 +81,29 @@ public class FightScreen extends AbstractIvcScreen {
 
     private final Map<String, ImageButton> mSkillToButton = new HashMap<String, ImageButton>();
 
-    private ProgressBar mProgressHp;
-
-    private ProgressBar mProgressMp;
-
-    private ProgressBar mProgressExp;
-
-    private Label mLabelCurrentHp;
-
-    private Label mLabelRegenHp;
-
-    private Label mLabelCurrentMp;
-
-    private Label mLabelRegenMp;
-
     private Label mLabelFirstMixedMpCost;
 
     private Label mLabelSecondMixedMpCost;
 
+    private HpBar mHpBar;
+    private MpBar mMpBar;
+    private ExpBar mExperienceBar;
+
     public FightScreen(IvcGame game) {
         super(game);
 
-        int viewportWidth = 400;
-        int viewportHeight = 300;
+        // Разрешение
+        float viewportWidth = 400 * mPx;
+        float viewportHeight = 300 * mPx;
 
         mStage.setViewport(new FitViewport(viewportWidth, viewportHeight));
         mStage.getViewport().update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
 
-        font = new BitmapFont();
         mSkin = new Skin();
+
+        font = new BitmapFont();
+        mSkin.add("default", font, BitmapFont.class);
+
         buttonAtlas = new TextureAtlas(Gdx.files.internal("data/ui/button.pack"));
         mSkin.addRegions(buttonAtlas);
 
@@ -252,29 +248,29 @@ public class FightScreen extends AbstractIvcScreen {
 
         // кнопки рун
         ImageButton btnQuas = new ImageButton(drawQuas);
-        btnQuas.setBounds(0, 200, 50, 50);
+        initBounds(btnQuas, 0, 200, 50, 50);
         mSkillToButton.put(RuneFirstSkill.class.getName(), btnQuas);
 
         ImageButton btnWex = new ImageButton(drawWex);
-        btnWex.setBounds(0, 140, 50, 50);
+        initBounds(btnWex, 0, 140, 50, 50);
         mSkillToButton.put(RuneSecondSkill.class.getName(), btnWex);
 
         ImageButton btnExort = new ImageButton(drawExort);
-        btnExort.setBounds(0, 80, 50, 50);
+        initBounds(btnExort, 0, 80, 50, 50);
         mSkillToButton.put(RuneThirdSkill.class.getName(), btnExort);
 
         // бутылка
         ImageButton btnBottle = new ImageButton(mSkin.getDrawable(BottleSkill.class.getName()));
-        btnBottle.setBounds(55, 200, 50, 50);
+        initBounds(btnBottle, 55, 200, 50, 50);
         mSkillToButton.put(BottleSkill.class.getName(), btnBottle);
 
         // подсказка
         TextButton btnHint = new TextButton("", textButtonStyle);
-        btnHint.setBounds(0, 260, 80, 40);
+        initBounds(btnHint, 0, 260, 80, 40);
 
         // текст на подсказке
         Image imgHintLabel = new Image(mSkin.get("ui-button-hint-text", Texture.class));
-        imgHintLabel.setBounds(10, 10, 60, 20);
+        initBounds(imgHintLabel, 10, 10, 60, 20);
         btnHint.addActor(imgHintLabel);
 
         mStage.addActor(btnHint);
@@ -299,20 +295,20 @@ public class FightScreen extends AbstractIvcScreen {
 
         // первый сложный скилл
         ImageButton btnFirstMixed = new ImageButton(transparent);
-        btnFirstMixed.setBounds(350, 200, 50, 50);
+        initBounds(btnFirstMixed, 350, 200, 50, 50);
         mSkillToButton.put(MixedFirstSkill.class.getName(), btnFirstMixed);
         // мана кост первого сложного скила
         mLabelFirstMixedMpCost = newMpCostLabel(0, mpCostLabelStyle, btnFirstMixed);
 
         // второй сложный скил
         ImageButton btnSecondMixed = new ImageButton(transparent);
-        btnSecondMixed.setBounds(350, 140, 50, 50);
+        initBounds(btnSecondMixed, 350, 140, 50, 50);
         mSkillToButton.put(MixedSecondSkill.class.getName(), btnSecondMixed);
         // мана кост второго сложного скила
         mLabelSecondMixedMpCost = newMpCostLabel(0, mpCostLabelStyle, btnSecondMixed);
 
         ImageButton btnInvoke = new ImageButton(drawMix);
-        btnInvoke.setBounds(350, 80, 50, 50);
+        initBounds(btnInvoke, 350, 80, 50, 50);
         mSkillToButton.put(MixSkill.class.getName(), btnInvoke);
         SkillItem invoke = mProcessor.getSkill(MixSkill.class.getName());
 
@@ -328,18 +324,18 @@ public class FightScreen extends AbstractIvcScreen {
 
         for (int i = 0; i < 7; i++) {
             ImageButton buff = new ImageButton(transparent);
-            buff.setBounds(60 + i * 25, 80, 20, 20);
+            initBounds(buff, 60 + i * 25, 80, 20, 20);
             mBuffStack.add(buff);
             mStage.addActor(buff);
         }
 
         mHintPanel = new ImageButton(new ColorDrawable(Color.BROWN));
-        mHintPanel.setBounds(100, 260, 200, 40);
+        initBounds(mHintPanel, 100, 260, 200, 40);
         mHintPanel.setVisible(false);
 
         for (int i = 0; i < 3; i++) {
             ImageButton hint = new ImageButton(new ColorDrawable(Color.CORAL));
-            hint.setBounds(i * 45, 0, 40, 40);
+            initBounds(hint, i * 45, 0, 40, 40);
             mHintBtns.add(hint);
             mHintPanel.addActor(hint);
         }
@@ -373,7 +369,7 @@ public class FightScreen extends AbstractIvcScreen {
                     Drawable dr = mSkin.getDrawable(mixed[1].getWorkerName());
                     btn2.getStyle().imageUp = dr;
                     mLabelSecondMixedMpCost.setText(
-                            Integer.toString((int)mixed[1].getInfo().getManaCost())
+                            Integer.toString((int) mixed[1].getInfo().getManaCost())
                     );
                     mLabelSecondMixedMpCost.setVisible(true);
                 }
@@ -384,91 +380,27 @@ public class FightScreen extends AbstractIvcScreen {
 
         mProcessor.resetToStart();
         GameObjectState player = mProcessor.getPlayer();
+        player.setOnLevelUp(new GameObjectCallback() {
+
+            @Override
+            public void run(GameObjectState object) {
+                SL.getSounds().play(IvcSounds.LEVEL_UP);
+            }
+
+        });
 
         // прогресс бар хп
-        ProgressBar.ProgressBarStyle barStyle = new ProgressBar.ProgressBarStyle(
-                mSkin.newDrawable("button-up", Color.DARK_GRAY),
-                mSkin.newDrawable("button-up", Color.RED)
-        );
-        barStyle.knobBefore = barStyle.knob;
-
-        mProgressHp = new ProgressBar(0, player.mMaxHp, 1, false, barStyle);
-        mProgressHp.setBounds(0, 40, viewportWidth, 20);
-        mStage.addActor(mProgressHp);
-
-        // Цифры на хп
-        Label.LabelStyle hpLabelStyle = new Label.LabelStyle(font, Color.WHITE);
-        mLabelCurrentHp = new Label("100/100", hpLabelStyle);
-        mLabelCurrentHp.setAlignment(Align.center, Align.center);
-        mLabelCurrentHp.setBounds(
-                mProgressHp.getX(),
-                mProgressHp.getY(),
-                mProgressHp.getWidth(),
-                mProgressHp.getHeight()
-        );
-        mLabelCurrentHp.setFontScale(0.4f);
-        mStage.addActor(mLabelCurrentHp);
-
-        // Цифры реген хп
-        mLabelRegenHp = new Label("+0.3", hpLabelStyle);
-        mLabelRegenHp.setAlignment(Align.center, Align.right);
-        mLabelRegenHp.setBounds(
-                mProgressHp.getX(),
-                mProgressHp.getY(),
-                mProgressHp.getWidth(),
-                mProgressHp.getHeight()
-        );
-        mLabelRegenHp.setFontScale(0.4f);
-        mStage.addActor(mLabelRegenHp);
+        mHpBar = new HpBar(this);
 
         // прогресс бар маны
-        barStyle = new ProgressBar.ProgressBarStyle(
-                mSkin.newDrawable("button-up", Color.DARK_GRAY),
-                mSkin.newDrawable("button-up", Color.BLUE)
-        );
-        barStyle.knobBefore = barStyle.knob;
+        mMpBar = new MpBar(this);
 
-        mProgressMp = new ProgressBar(0, player.mMaxMp, 1, false, barStyle);
-        mProgressMp.setBounds(0, 20, viewportWidth, 20);
-        mStage.addActor(mProgressMp);
-
-        barStyle = new ProgressBar.ProgressBarStyle(
-                mSkin.newDrawable("button-down", Color.DARK_GRAY),
-                mSkin.newDrawable("button-down", Color.GREEN)
-        );
-        barStyle.knobBefore = barStyle.knob;
-
-        // Цифры на мп
-        mLabelCurrentMp = new Label("100/100", hpLabelStyle);
-        mLabelCurrentMp.setAlignment(Align.center, Align.center);
-        mLabelCurrentMp.setBounds(
-                mProgressMp.getX(),
-                mProgressMp.getY(),
-                mProgressMp.getWidth() * 0.99f,
-                mProgressMp.getHeight()
-        );
-        mLabelCurrentMp.setFontScale(0.4f);
-        mStage.addActor(mLabelCurrentMp);
-
-        // Цифры реген мп
-        mLabelRegenMp = new Label("+0.3", hpLabelStyle);
-        mLabelRegenMp.setAlignment(Align.center, Align.right);
-        mLabelRegenMp.setBounds(
-                mProgressMp.getX(),
-                mProgressMp.getY(),
-                mProgressMp.getWidth() * 0.99f,
-                mProgressMp.getHeight()
-        );
-        mLabelRegenMp.setFontScale(0.4f);
-        mStage.addActor(mLabelRegenMp);
-
-        // полшоесс бар опыта
-        mProgressExp = new ProgressBar(0, 100, 1, false, barStyle);
-        mProgressExp.setBounds(0, 00, viewportWidth / 2, 20);
-        mStage.addActor(mProgressExp);
+        // прогресс бар опыта
+        mExperienceBar = new ExpBar(this);
 
         SL.getSounds().loadSounds(new String[]{
                 IvcSounds.SKILL_USE_FAIL,
+                IvcSounds.LEVEL_UP,
         });
 
 
@@ -487,6 +419,7 @@ public class FightScreen extends AbstractIvcScreen {
 
             @Override
             public void run(IvcProcessor game) {
+                SL.getGame().getPlayer().incExperience(SL.getGame().getLeveling().getParams(1).getExpForUnit() * 5);
                 mEnemyView.startDeathAnimation();
                 updateEnemyView();
             }
@@ -494,6 +427,20 @@ public class FightScreen extends AbstractIvcScreen {
         });
 
         updateEnemyView();
+
+        mStage.setDebugAll(true);
+    }
+
+    /**
+     * Установка размеров актора с учетом разрешения
+     * @param actor
+     * @param left
+     * @param bottom
+     * @param width
+     * @param height
+     */
+    private void initBounds(Actor actor, float left, float bottom, float width, float height) {
+        actor.setBounds(left * mPx, bottom * mPx, width * mPx, height * mPx);
     }
 
     @Override
@@ -507,7 +454,8 @@ public class FightScreen extends AbstractIvcScreen {
         Label lbl = new Label(Integer.toString((int)manaCost), style);
         lbl.setVisible(manaCost > 0);
         lbl.setAlignment(Align.center, Align.center);
-        lbl.setBounds(
+        initBounds(
+                lbl,
                 btn.getWidth() * 2 / 3,
                 0,
                 btn.getWidth() / 3,
@@ -528,48 +476,15 @@ public class FightScreen extends AbstractIvcScreen {
         GameObjectState player = mProcessor.getPlayer();
         mProcessor.update(delta);
 
-        player.mCurrentHp = player.mCurrentHp - (float)Math.random() * delta;
-        player.mExperience = (int)(player.mExperience + Math.random() * 3) % 100;
-
-        mProgressHp.setRange(0, player.mMaxHp);
-        mProgressHp.setValue(player.mCurrentHp);
-        mLabelCurrentHp.setText(
-                Integer.toString((int) player.mCurrentHp)
-                        + "/"
-                        + Integer.toString((int) player.mMaxHp)
-        );
-        updateRegenLabel(mLabelRegenHp, player.mRegenHp / delta, player.mCurrentHp < player.mMaxHp);
-
-        mProgressMp.setRange(0, player.mMaxMp);
-        mProgressMp.setValue(player.mCurrentMp);
-        mLabelCurrentMp.setText(
-                Integer.toString((int) player.mCurrentMp)
-                        + "/"
-                        + Integer.toString((int) player.mMaxMp)
-        );
-        updateRegenLabel(mLabelRegenMp, player.mRegenMp / delta, player.mCurrentMp < player.mMaxMp);
-
-        mProgressExp.setRange(0, 100);
-        mProgressExp.setValue(player.mExperience);
+        mHpBar.update(player, delta);
+        mMpBar.update(player, delta);
+        mExperienceBar.update(player);
     }
 
     private void updateEnemyView() {
         Drawable question = mSkin.getDrawable(mProcessor.getEnemy().getQuestion());
         mEnemyView.setQuestion(question);
         mEnemyView.randomize();
-    }
-
-    private void updateRegenLabel(Label label, float regen, boolean ltMax) {
-        if (!ltMax) {
-            label.setVisible(false);
-            return;
-        }
-        if (regen < 0.1) {
-            label.setText(String.format("+%.2f", regen));
-        } else {
-            label.setText(String.format("+%.1f", regen));
-        }
-        label.setVisible(true);
     }
 
 }
