@@ -1,6 +1,7 @@
 package com.quadro.games.invokervscrab.ivc;
 
 import com.badlogic.gdx.Gdx;
+import com.quadro.games.invokervscrab.SL;
 import com.quadro.games.invokervscrab.ivc.effect.EffectItem;
 import com.quadro.games.invokervscrab.ivc.mob.Crab;
 import com.quadro.games.invokervscrab.ivc.skill.SkillItem;
@@ -208,6 +209,7 @@ public class IvcProcessor {
         if (!tryUseMp(mMixedSkills[index].getInfo().getManaCost())) {
             return ;
         }
+        SL.getSounds().play(mMixedSkills[index].getWorker().getSound());
         if (mMixedSkills[index].getWorkerName().equals(mEnemy.getQuestion())) {
             randomizeQuestion();
         }
@@ -220,6 +222,14 @@ public class IvcProcessor {
         }
         mPlayer.mCurrentMp -= mp;
         return true;
+    }
+
+    public void useSkill(SkillItem skill) {
+        if (!this.tryUseMp(skill.getInfo().getManaCost())) {
+            return;
+        }
+        SL.getSounds().play(skill.getWorker().getSound());
+        skill.getWorker().useSkill(this, skill);
     }
 
 }

@@ -16,15 +16,27 @@ public class IvcSounds {
 
     public static final String LEVEL_UP = "level_up.ogg";
 
+    public static final String SKILL_SUN_STRIKE = "skill_sun_strike.ogg";
+
+    public static final String THING_BOTTLE = "thing_bottle.ogg";
+
     private HashMap<String, Sound> mLoaded = new HashMap<String, Sound>();
+
+    public void loadSound(String name) {
+        mLoaded.put(name, Gdx.audio.newSound(Gdx.files.internal(mSoundsPath + name)));
+    }
 
     public void loadSounds(String[] names) {
         for (int i = 0; i < names.length; i++) {
-            mLoaded.put(names[i], Gdx.audio.newSound(Gdx.files.internal(mSoundsPath + names[i])));
+            loadSound(names[i]);
         }
     }
 
     public long play(String name) {
+        if (name == null) {
+            return 0;
+        }
+        Gdx.app.log(getClass().getName(), "play sound " + name);
         return mLoaded.get(name).play();
     }
 

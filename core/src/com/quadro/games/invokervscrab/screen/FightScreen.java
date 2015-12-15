@@ -141,6 +141,7 @@ public class FightScreen extends AbstractIvcScreen {
 
             Drawable drawable = new SpriteDrawable(sprite);
             mSkin.add(skillName, drawable, Drawable.class);
+            SL.getSounds().loadSound(mProcessor.getSkill(skillName).getWorker().getSound());
         }
 
         String[] uiTextures = new String[] {
@@ -218,7 +219,7 @@ public class FightScreen extends AbstractIvcScreen {
 
                 Gdx.app.log(getClass().getName(), "mana cost " + skill.getInfo().getManaCost());
 
-                skill.use(SL.getGame());
+                SL.getGame().useSkill(skill);
             }
 
         };

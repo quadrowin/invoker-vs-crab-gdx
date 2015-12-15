@@ -26,52 +26,66 @@ import java.util.Map;
  */
 public class MixSkill extends AbstractSkill {
 
-    private Map<String, String> mSkillToClass = new HashMap<String, String>();
+    private Map<String, String> mCodeToSkill = new HashMap<String, String>();
+
+//    private Map<String, String> mSkillToCode = new HashMap<String, String>();
 
     private Map<String, Character> mBuffToSeq = new HashMap<String, Character>();
 
     public MixSkill() {
-        mSkillToClass.put("111", Result111.class.getName());
+        mCodeToSkill.put("QQQ", Result111.class.getName());
 
-        mSkillToClass.put("112", Result112.class.getName());
-        mSkillToClass.put("121", Result112.class.getName());
-        mSkillToClass.put("211", Result112.class.getName());
+        mCodeToSkill.put("QQW", Result112.class.getName());
+        mCodeToSkill.put("QWQ", Result112.class.getName());
+        mCodeToSkill.put("WQQ", Result112.class.getName());
 
-        mSkillToClass.put("113", Result113.class.getName());
-        mSkillToClass.put("131", Result113.class.getName());
-        mSkillToClass.put("311", Result113.class.getName());
+        mCodeToSkill.put("QQE", Result113.class.getName());
+        mCodeToSkill.put("QEQ", Result113.class.getName());
+        mCodeToSkill.put("EQQ", Result113.class.getName());
 
-        mSkillToClass.put("122", Result122.class.getName());
-        mSkillToClass.put("212", Result122.class.getName());
-        mSkillToClass.put("221", Result122.class.getName());
+        mCodeToSkill.put("QWW", Result122.class.getName());
+        mCodeToSkill.put("WQW", Result122.class.getName());
+        mCodeToSkill.put("WWQ", Result122.class.getName());
 
-        mSkillToClass.put("123", Result123.class.getName());
-        mSkillToClass.put("132", Result123.class.getName());
-        mSkillToClass.put("213", Result123.class.getName());
-        mSkillToClass.put("231", Result123.class.getName());
-        mSkillToClass.put("312", Result123.class.getName());
-        mSkillToClass.put("321", Result123.class.getName());
+        mCodeToSkill.put("QWE", Result123.class.getName());
+        mCodeToSkill.put("QEW", Result123.class.getName());
+        mCodeToSkill.put("WQE", Result123.class.getName());
+        mCodeToSkill.put("WEQ", Result123.class.getName());
+        mCodeToSkill.put("EQW", Result123.class.getName());
+        mCodeToSkill.put("EWQ", Result123.class.getName());
 
-        mSkillToClass.put("133", Result133.class.getName());
-        mSkillToClass.put("313", Result133.class.getName());
-        mSkillToClass.put("331", Result133.class.getName());
+        mCodeToSkill.put("QEE", Result133.class.getName());
+        mCodeToSkill.put("EQE", Result133.class.getName());
+        mCodeToSkill.put("EEQ", Result133.class.getName());
 
-        mSkillToClass.put("222", Result222.class.getName());
+        mCodeToSkill.put("WWW", Result222.class.getName());
 
-        mSkillToClass.put("223", Result223.class.getName());
-        mSkillToClass.put("232", Result223.class.getName());
-        mSkillToClass.put("322", Result223.class.getName());
+        mCodeToSkill.put("WWE", Result223.class.getName());
+        mCodeToSkill.put("WEW", Result223.class.getName());
+        mCodeToSkill.put("EWW", Result223.class.getName());
 
-        mSkillToClass.put("233", Result233.class.getName());
-        mSkillToClass.put("323", Result233.class.getName());
-        mSkillToClass.put("332", Result233.class.getName());
+        mCodeToSkill.put("WEE", Result233.class.getName());
+        mCodeToSkill.put("EWE", Result233.class.getName());
+        mCodeToSkill.put("EEW", Result233.class.getName());
 
-        mSkillToClass.put("333", Result333.class.getName());
+        mCodeToSkill.put("EEE", Result333.class.getName());
 
-        mBuffToSeq.put(RuneQuasEffect.class.getName(), '1');
-        mBuffToSeq.put(RuneWexEffect.class.getName(), '2');
-        mBuffToSeq.put(RuneExortEffect.class.getName(), '3');
+//        for (Map.Entry<String, String> entry : mCodeToSkill.entrySet()) {
+//            mSkillToCode.put(entry.getValue(), entry.getKey());
+//        }
+
+        mBuffToSeq.put(RuneQuasEffect.class.getName(), 'Q');
+        mBuffToSeq.put(RuneWexEffect.class.getName(), 'W');
+        mBuffToSeq.put(RuneExortEffect.class.getName(), 'E');
     }
+
+//    public String convertCodeToSkill(String code) {
+//        return mCodeToSkill.get(code);
+//    }
+//
+//    public String convertSkillToCode(String skill) {
+//        return mSkillToCode.get(skill);
+//    }
 
     @Override
     public void useSkill(IvcProcessor game, SkillItem skill) {
@@ -87,7 +101,7 @@ public class MixSkill extends AbstractSkill {
             }
         }
 
-        String resultSkillName = mSkillToClass.get(String.valueOf(sequence));
+        String resultSkillName = mCodeToSkill.get(String.valueOf(sequence));
         SkillItem resultSkill = game.getSkill(resultSkillName);
 
         SkillItem[] mixed = game.getMixedSkills();

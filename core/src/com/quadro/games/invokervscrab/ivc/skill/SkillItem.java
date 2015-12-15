@@ -1,6 +1,5 @@
 package com.quadro.games.invokervscrab.ivc.skill;
 
-import com.quadro.games.invokervscrab.ivc.IvcProcessor;
 import com.quadro.games.invokervscrab.ivc.skill.worker.AbstractSkill;
 
 /**
@@ -27,13 +26,6 @@ public class SkillItem {
 
     public String getWorkerName() {
         return mWorker.getClass().getName();
-    }
-
-    public void use(IvcProcessor game) {
-        if (!game.tryUseMp(mInfo.getManaCost())) {
-            return;
-        }
-        mWorker.useSkill(game, this);
     }
 
 }

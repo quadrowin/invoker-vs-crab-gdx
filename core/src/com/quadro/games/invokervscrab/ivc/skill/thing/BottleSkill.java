@@ -1,6 +1,7 @@
 package com.quadro.games.invokervscrab.ivc.skill.thing;
 
 import com.quadro.games.invokervscrab.ivc.IvcProcessor;
+import com.quadro.games.invokervscrab.ivc.IvcSounds;
 import com.quadro.games.invokervscrab.ivc.effect.EffectItem;
 import com.quadro.games.invokervscrab.ivc.effect.worker.BottleEffect;
 import com.quadro.games.invokervscrab.ivc.skill.SkillItem;
@@ -20,6 +21,11 @@ public class BottleSkill extends AbstractSkill {
      * Может быть в осле.
      */
     private boolean mInHand = true;
+
+    @Override
+    public String getSound() {
+        return IvcSounds.THING_BOTTLE;
+    }
 
     @Override
     public void useSkill(IvcProcessor game, SkillItem skill) {
