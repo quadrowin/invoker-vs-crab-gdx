@@ -1,4 +1,4 @@
-package com.quadro.games.invokervscrab.screen.FightControl;
+package com.quadro.games.invokervscrab.screen.UiControl;
 
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.ProgressBar;

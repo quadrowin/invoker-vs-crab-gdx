@@ -50,9 +50,9 @@ import com.quadro.games.invokervscrab.ivc.skill.worker.mixed.Result222;
 import com.quadro.games.invokervscrab.ivc.skill.worker.mixed.Result223;
 import com.quadro.games.invokervscrab.ivc.skill.worker.mixed.Result233;
 import com.quadro.games.invokervscrab.ivc.skill.worker.mixed.Result333;
-import com.quadro.games.invokervscrab.screen.FightControl.ExpBar;
-import com.quadro.games.invokervscrab.screen.FightControl.HpBar;
-import com.quadro.games.invokervscrab.screen.FightControl.MpBar;
+import com.quadro.games.invokervscrab.screen.UiControl.ExpBar;
+import com.quadro.games.invokervscrab.screen.UiControl.HpBar;
+import com.quadro.games.invokervscrab.screen.UiControl.MpBar;
 import com.quadro.games.invokervscrab.view.ColorDrawable;
 import com.quadro.games.invokervscrab.view.CrabView;
 import com.quadro.games.invokervscrab.view.EmptyDrawable;
@@ -293,6 +293,7 @@ public class FightScreen extends AbstractIvcScreen {
         final Drawable transparent = new EmptyDrawable();
         Label.LabelStyle mpCostLabelStyle = new Label.LabelStyle(font, Color.WHITE);
         mpCostLabelStyle.background = new ColorDrawable(Color.BLUE);
+        mSkin.add("label-style-mp-cost", mpCostLabelStyle, Label.LabelStyle.class);
 
         // первый сложный скилл
         ImageButton btnFirstMixed = new ImageButton(transparent);
