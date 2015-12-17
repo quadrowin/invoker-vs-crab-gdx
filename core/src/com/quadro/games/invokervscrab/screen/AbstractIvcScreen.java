@@ -47,6 +47,10 @@ public abstract class AbstractIvcScreen implements Screen {
         mStage.addActor(actor);
     }
 
+    public float getPx() {
+        return mPx;
+    }
+
     public Skin getSkin() {
         return mSkin;
     }

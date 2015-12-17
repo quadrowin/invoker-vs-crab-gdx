@@ -32,7 +32,7 @@ public class HpBar extends AbstractBar {
 
         mLabel = new Label("100/100", hpLabelStyle);
         mLabel.setAlignment(Align.center, Align.center);
-        mLabel.setFontScale(0.4f);
+        mLabel.setFontScale(0.4f * screen.getPx());
         mLabel.setBounds(
                 mProgress.getX(),
                 mProgress.getY(),
@@ -50,7 +50,7 @@ public class HpBar extends AbstractBar {
                 mProgress.getWidth(),
                 mProgress.getHeight()
         );
-        mLabelRegen.setFontScale(0.4f);
+        mLabelRegen.setFontScale(0.4f * screen.getPx());
         screen.getStage().addActor(mLabelRegen);
     }
 

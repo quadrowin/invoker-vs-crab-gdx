@@ -28,31 +28,33 @@ public class SkillButton {
 
         mButtonStyle = new ImageButton.ImageButtonStyle(null, null, null, dr, null, null);
         mButton = new ImageButton(mButtonStyle);
+        mButton.setUserObject(skill);
         screen.addStageBounds(mButton, x, y, BUTTON_WIDTH, BUTTON_HEIGHT);
 
         Label.LabelStyle mpCostLabelStyle = screen.getSkin().get("label-style-mp-cost", Label.LabelStyle.class);
         int manaCost = (int)skill.getInfo().getManaCost();
-        mMpLabel = newMpCostLabel(manaCost, mpCostLabelStyle, mButton);
+        mMpLabel = new Label(Integer.toString(manaCost), mpCostLabelStyle);
+        mMpLabel.setVisible(manaCost > 0);
+        mMpLabel.setAlignment(Align.center, Align.center);
+        mMpLabel.setBounds(
+                mButton.getWidth() * 2 / 3,
+                0,
+                mButton.getWidth() / 3,
+                mButton.getHeight() / 5
+        );
+        mMpLabel.setFontScale(0.4f * screen.getPx());
+        mButton.addActor(mMpLabel);
 
         mButton.addListener(clickListener);
     }
 
-    private Label newMpCostLabel(int manaCost, Label.LabelStyle style, ImageButton btn) {
-        Label lbl = new Label(Integer.toString(manaCost), style);
-        lbl.setVisible(manaCost > 0);
-        lbl.setAlignment(Align.center, Align.center);
-        lbl.setBounds(
-                btn.getWidth() * 2 / 3,
-                0,
-                btn.getWidth() / 3,
-                btn.getHeight() / 5
-        );
-        lbl.setFontScale(0.4f);
-        btn.addActor(lbl);
-        return lbl;
-    }
-
     public void setSkill(AbstractIvcScreen screen, SkillItem skill) {
+        if (skill == null) {
+            mButtonStyle.imageUp = screen.getSkin().getDrawable("transparent");
+            mMpLabel.setVisible(false);
+            return;
+        }
+
         Drawable dr = screen.getSkin().getDrawable(skill.getWorkerName());
         mButtonStyle.imageUp = dr;
 

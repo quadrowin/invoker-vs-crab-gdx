@@ -6,6 +6,7 @@ import com.quadro.games.invokervscrab.ivc.effect.EffectItem;
 import com.quadro.games.invokervscrab.ivc.mob.Crab;
 import com.quadro.games.invokervscrab.ivc.skill.SkillItem;
 import com.quadro.games.invokervscrab.ivc.skill.SkillLoader;
+import com.quadro.games.invokervscrab.ivc.skill.worker.AbstractSkill;
 import com.quadro.games.invokervscrab.ivc.skill.worker.RuneFirstSkill;
 import com.quadro.games.invokervscrab.ivc.skill.worker.RuneSecondSkill;
 import com.quadro.games.invokervscrab.ivc.skill.worker.RuneThirdSkill;
@@ -119,6 +120,10 @@ public class IvcProcessor {
                 mMixedCodeSolver[Character.getNumericValue(code.charAt(1))],
                 mMixedCodeSolver[Character.getNumericValue(code.charAt(2))],
         };
+    }
+
+    public <T extends AbstractSkill> SkillItem getSkill(Class<T> worker) {
+        return mSkillsMap.get(worker.getName());
     }
 
     public SkillItem getSkill(String worker) {

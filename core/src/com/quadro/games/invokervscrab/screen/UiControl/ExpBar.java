@@ -30,7 +30,7 @@ public class ExpBar extends AbstractBar {
 
         mLabel = new Label("100/100", labelStyle);
         mLabel.setAlignment(Align.center, Align.center);
-        mLabel.setFontScale(0.4f);
+        mLabel.setFontScale(0.4f * screen.getPx());
         mLabel.setBounds(
                 mProgress.getX(),
                 mProgress.getY(),

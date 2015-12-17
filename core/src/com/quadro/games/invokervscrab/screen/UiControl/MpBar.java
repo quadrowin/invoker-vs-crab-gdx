@@ -42,7 +42,7 @@ public class MpBar extends AbstractBar {
                 mProgress.getWidth(),
                 mProgress.getHeight()
         );
-        mLabel.setFontScale(0.4f);
+        mLabel.setFontScale(0.4f * screen.getPx());
         screen.getStage().addActor(mLabel);
 
         // Цифры реген мп
@@ -54,7 +54,7 @@ public class MpBar extends AbstractBar {
                 mProgress.getWidth(),
                 mProgress.getHeight()
         );
-        mLabelRegen.setFontScale(0.4f);
+        mLabelRegen.setFontScale(0.4f * screen.getPx());
         screen.getStage().addActor(mLabelRegen);
     }
 
