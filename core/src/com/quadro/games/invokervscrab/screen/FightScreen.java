@@ -56,6 +56,7 @@ import com.quadro.games.invokervscrab.screen.UiControl.SkillButton;
 import com.quadro.games.invokervscrab.view.ColorDrawable;
 import com.quadro.games.invokervscrab.view.CrabView;
 import com.quadro.games.invokervscrab.view.EmptyDrawable;
+import com.quadro.games.invokervscrab.view.TowerView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -72,6 +73,7 @@ public class FightScreen extends AbstractIvcScreen {
     private final List<ImageButton> mBuffStack = new ArrayList<ImageButton>();
 
     private CrabView mEnemyView;
+    private TowerView mTower;
 
     private final List<ImageButton> mHintBtns = new ArrayList<ImageButton>();
 
@@ -121,6 +123,9 @@ public class FightScreen extends AbstractIvcScreen {
 
                 // итемы
                 BottleSkill.class.getName(),        "data/thing/bottle_3.png",
+
+                // мобы
+                "unit/tower",                       "data/units/tower.png",
         };
 
         for (int i = 0; i < skillsFiles.length; i += 2) {
@@ -133,7 +138,10 @@ public class FightScreen extends AbstractIvcScreen {
 
             Drawable drawable = new SpriteDrawable(sprite);
             mSkin.add(skillName, drawable, Drawable.class);
-            SL.getSounds().loadSound(mProcessor.getSkill(skillName).getWorker().getSound());
+
+            if (!skillName.equals("unit/tower")) {
+                SL.getSounds().loadSound(mProcessor.getSkill(skillName).getWorker().getSound());
+            }
         }
 
         String[] uiTextures = new String[] {
@@ -398,6 +406,7 @@ public class FightScreen extends AbstractIvcScreen {
         });
 
         mEnemyView = new CrabView(mProcessor.getEnemy());
+        mTower = new TowerView(this);
 
         mProcessor.setOnEnemyChange(new GameCallback() {
 

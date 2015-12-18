@@ -1,10 +1,11 @@
 package com.quadro.games.invokervscrab.view.CrabAnimation;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Matrix4;
 import com.quadro.games.invokervscrab.ivc.mob.Crab;
+import com.quadro.games.invokervscrab.view.CrabContext;
 import com.quadro.games.invokervscrab.view.CrabPart.AbstractPart;
 import com.quadro.games.invokervscrab.view.CrabPart.Hand;
-import com.quadro.games.invokervscrab.view.CrabContext;
 
 /**
  * Created by Quadrowin on 05.12.2015.
@@ -39,6 +40,8 @@ public class Attack extends AbstractAnimation {
         if (context.questionTexture != null) {
             context.batch.begin();
             context.batch.setProjectionMatrix(context.projection);
+            Color c = context.batch.getColor();
+            context.batch.setColor(c.r, c.g, c.b, 1);
             float w = context.body.getWidth();
             float h = context.body.getHeight();
             float size = h * 0.7f;
