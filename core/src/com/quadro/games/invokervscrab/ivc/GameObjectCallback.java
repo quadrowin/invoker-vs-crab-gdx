@@ -5,6 +5,6 @@ package com.quadro.games.invokervscrab.ivc;
  */
 public interface GameObjectCallback {
 
-    public void run(GameObjectState object);
+    void run(GameObjectState object);
 
 }

@@ -1,4 +1,4 @@
-package com.quadro.games.invokervscrab.view.CrabPart;
+package com.quadro.games.invokervscrab.ivc.enemy.crab.view.part;
 
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
@@ -8,13 +8,6 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 public class Hand extends AbstractPart {
 
     private float mAttackFrame = 0;
-
-    private boolean mRight = false;
-
-    public Hand(float x, float y, float scale, boolean right) {
-        super(x, y, scale);
-        mRight = right;
-    }
 
     @Override
     public void draw(ShapeRenderer sr) {
@@ -33,21 +26,21 @@ public class Hand extends AbstractPart {
             angel *= maxAngel;
         }
 
-        if (mRight) {
+//        if (mRight) {
             sr.rotate(0, 0, 1, 30);
             sr.scale(1.3f, 1, 1);
             sr.arc(-10, 0, 50, angel, 180);
             sr.arc(0, 0, 70, 180, 180);
             sr.scale(1 / 1.3f, 1, 1);
             sr.rotate(0, 0, 1, -30);
-        } else {
-            sr.rotate(0, 0, 1, -30);
-            sr.scale(1.3f, 1, 1);
-            sr.arc(0, 0, 50, -angel, 180);
-            sr.arc(0, 0, 60, 180, 180);
-            sr.scale(1 / 1.3f, 1, 1);
-            sr.rotate(0, 0, 1, 30);
-        }
+//        } else {
+//            sr.rotate(0, 0, 1, -30);
+//            sr.scale(1.3f, 1, 1);
+//            sr.arc(0, 0, 50, -angel, 180);
+//            sr.arc(0, 0, 60, 180, 180);
+//            sr.scale(1 / 1.3f, 1, 1);
+//            sr.rotate(0, 0, 1, 30);
+//        }
         sr.end();
     }
 

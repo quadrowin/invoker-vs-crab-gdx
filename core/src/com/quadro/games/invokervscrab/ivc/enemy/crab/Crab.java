@@ -1,4 +1,4 @@
-package com.quadro.games.invokervscrab.ivc.mob;
+package com.quadro.games.invokervscrab.ivc.enemy.crab;
 
 /**
  * Created by Quadrowin on 24.11.2015.

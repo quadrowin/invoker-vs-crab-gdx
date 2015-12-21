@@ -1,4 +1,4 @@
-package com.quadro.games.invokervscrab.view.CrabPart;
+package com.quadro.games.invokervscrab.ivc.enemy.crab.view.part;
 
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
@@ -7,9 +7,9 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
  */
 public class Body extends AbstractPart {
 
-    public Body(float x, float y, float scale) {
-        super(x, y, scale);
-        mSize = new float[] {100, 50};
+    public Body() {
+        mSizeX = 100;
+        mSizeY = 50;
     }
 
     @Override
@@ -17,10 +17,10 @@ public class Body extends AbstractPart {
         sr.begin(ShapeRenderer.ShapeType.Filled);
         sr.setColor(1, 0, 0, 1);
         sr.ellipse(
-                -0.5f * mSize[0],
-                -0.5f * mSize[1],
-                mSize[0],
-                mSize[1]
+                -0.5f * mSizeX,
+                -0.5f * mSizeY,
+                mSizeX,
+                mSizeY
         );
         sr.end();
     }

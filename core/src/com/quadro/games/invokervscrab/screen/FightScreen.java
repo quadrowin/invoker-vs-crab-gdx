@@ -31,6 +31,11 @@ import com.quadro.games.invokervscrab.ivc.effect.worker.BottleEffect;
 import com.quadro.games.invokervscrab.ivc.effect.worker.RuneExortEffect;
 import com.quadro.games.invokervscrab.ivc.effect.worker.RuneQuasEffect;
 import com.quadro.games.invokervscrab.ivc.effect.worker.RuneWexEffect;
+import com.quadro.games.invokervscrab.ivc.enemy.crab.Crab;
+import com.quadro.games.invokervscrab.ivc.enemy.crab.CrabCallback;
+import com.quadro.games.invokervscrab.ivc.enemy.crab.view.CrabDeathView;
+import com.quadro.games.invokervscrab.ivc.enemy.crab.view.CrabView;
+import com.quadro.games.invokervscrab.ivc.enemy.tower.TowerView;
 import com.quadro.games.invokervscrab.ivc.skill.SkillItem;
 import com.quadro.games.invokervscrab.ivc.skill.thing.BottleSkill;
 import com.quadro.games.invokervscrab.ivc.skill.worker.MixSkill;
@@ -54,12 +59,12 @@ import com.quadro.games.invokervscrab.screen.UiControl.HpBar;
 import com.quadro.games.invokervscrab.screen.UiControl.MpBar;
 import com.quadro.games.invokervscrab.screen.UiControl.SkillButton;
 import com.quadro.games.invokervscrab.view.ColorDrawable;
-import com.quadro.games.invokervscrab.view.CrabView;
 import com.quadro.games.invokervscrab.view.EmptyDrawable;
-import com.quadro.games.invokervscrab.view.TowerView;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Quadrowin on 27.11.2015.
@@ -72,8 +77,7 @@ public class FightScreen extends AbstractIvcScreen {
 
     private final List<ImageButton> mBuffStack = new ArrayList<ImageButton>();
 
-    private CrabView mEnemyView;
-    private TowerView mTower;
+    private TowerView mTowerView;
 
     private final List<ImageButton> mHintBtns = new ArrayList<ImageButton>();
 
@@ -82,6 +86,8 @@ public class FightScreen extends AbstractIvcScreen {
     private HpBar mHpBar;
     private MpBar mMpBar;
     private ExpBar mExperienceBar;
+
+    private Map<Object, CrabView> mEnemyViews = new HashMap<Object, CrabView>();
 
     public FightScreen(IvcGame game) {
         super(game);
@@ -170,13 +176,6 @@ public class FightScreen extends AbstractIvcScreen {
             SpriteDrawable dr = (SpriteDrawable)mSkin.getDrawable(drawableSpriteCopy[i + 1]);
             mSkin.add(drawableSpriteCopy[i], new SpriteDrawable(dr), Drawable.class);
         }
-
-        mSkin.getDrawable( RuneQuasEffect.class.getName() );
-
-        Drawable drawQuas = mSkin.getDrawable(RuneFirstSkill.class.getName());
-        Drawable drawWex = mSkin.getDrawable(RuneSecondSkill.class.getName());
-        Drawable drawExort = mSkin.getDrawable(RuneThirdSkill.class.getName());
-        Drawable drawMix = mSkin.getDrawable(MixSkill.class.getName());
 
         NinePatch patchUp = new NinePatch(
                 mSkin.get("ui-button-up-64", Texture.class),
@@ -395,7 +394,6 @@ public class FightScreen extends AbstractIvcScreen {
                 IvcSounds.LEVEL_UP,
         });
 
-
         mProcessor.setOnSkillNotEnoughMp(new GameCallback() {
 
             @Override
@@ -405,22 +403,37 @@ public class FightScreen extends AbstractIvcScreen {
 
         });
 
-        mEnemyView = new CrabView(mProcessor.getEnemy());
-        mTower = new TowerView(this);
+        mTowerView = new TowerView(this);
 
-        mProcessor.setOnEnemyChange(new GameCallback() {
+        mProcessor.setOnCrabCreate(new CrabCallback() {
 
             @Override
-            public void run(IvcProcessor game) {
-                SL.getGame().getPlayer().incExperience(SL.getGame().getLeveling().getParams(1).getExpForUnit() * 5);
-                mEnemyView.startDeathAnimation();
-                updateEnemyView();
+            public void run(Crab crab) {
+                CrabView view = new CrabView(crab);
+                Drawable question = mSkin.getDrawable(crab.getQuestion());
+                view.setQuestion(question);
+                view.randomize();
+                addStageBounds(view, 200, 150, 100, 100);
+                mEnemyViews.put(crab, view);
             }
 
         });
 
-        updateEnemyView();
+        mProcessor.setOnCrabDeath(new CrabCallback() {
 
+            @Override
+            public void run(Crab crab) {
+                IvcProcessor game = SL.getGame();
+                game.getPlayer().incExperience(game.getLeveling().getParams(1).getExpForUnit() * 5);
+
+                CrabView liveView = mEnemyViews.remove(crab);
+                CrabDeathView deathView = new CrabDeathView();
+                deathView.assignFrom(liveView);
+            }
+
+        });
+
+        mProcessor.randomizeQuestion();
 //        mStage.setDebugAll(true);
     }
 
@@ -440,7 +453,6 @@ public class FightScreen extends AbstractIvcScreen {
     public void draw(float delta) {
         mStage.act(delta);
         mStage.draw();
-        mEnemyView.draw(mStage, delta);
     }
 
     @Override
@@ -450,18 +462,12 @@ public class FightScreen extends AbstractIvcScreen {
 
     @Override
     public void update(float delta) {
-        GameObjectState player = mProcessor.getPlayer();
         mProcessor.update(delta);
 
+        GameObjectState player = mProcessor.getPlayer();
         mHpBar.update(player, delta);
         mMpBar.update(player, delta);
         mExperienceBar.update(player);
-    }
-
-    private void updateEnemyView() {
-        Drawable question = mSkin.getDrawable(mProcessor.getEnemy().getQuestion());
-        mEnemyView.setQuestion(question);
-        mEnemyView.randomize();
     }
 
 }

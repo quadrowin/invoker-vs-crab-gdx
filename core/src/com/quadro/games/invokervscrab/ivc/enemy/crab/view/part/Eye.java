@@ -1,4 +1,4 @@
-package com.quadro.games.invokervscrab.view.CrabPart;
+package com.quadro.games.invokervscrab.ivc.enemy.crab.view.part;
 
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
@@ -7,11 +7,12 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
  */
 public class Eye extends AbstractPart {
 
-    private float mRadiusOuter = 40;
-
-    private float mRadiusInner = 20;
-
     private int mRandomIndex = 0;
+
+    public Eye () {
+        mSizeX = 40;
+        mSizeY = 40;
+    }
 
     final private static float[][] mInnerDelta = new float[][] {
             {-0.7f, -0.7f},
@@ -25,11 +26,10 @@ public class Eye extends AbstractPart {
             {0.7f, 0.7f},
     };
 
-    public Eye(float x, float y, float scale) {
-        super(x, y, scale);
-    }
-
     public void draw(ShapeRenderer sr) {
+        float radiusOuter = mSizeX;
+        float radiusInner = mSizeX / 2;
+
         sr.begin(ShapeRenderer.ShapeType.Filled);
         sr.setColor(0, 0, 0, 1);
 
@@ -40,7 +40,7 @@ public class Eye extends AbstractPart {
         sr.circle(
                 0,
                 0,
-                mRadiusOuter
+                radiusOuter
         );
 
         float[] innerDelta = mInnerDelta[ mRandomIndex ];
@@ -49,14 +49,14 @@ public class Eye extends AbstractPart {
         sr.circle(
                 0,
                 0,
-                (mRadiusOuter - 2)
+                (radiusOuter - 2)
         );
 
         sr.setColor(0, 0, 0, 1);
         sr.circle(
-                innerDelta[0] * mRadiusInner,
-                innerDelta[1] * mRadiusInner,
-                mRadiusInner
+                innerDelta[0] * radiusInner,
+                innerDelta[1] * radiusInner,
+                radiusInner
         );
 
         sr.translate(-x, -y, 0);

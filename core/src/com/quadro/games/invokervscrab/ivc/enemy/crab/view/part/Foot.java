@@ -1,4 +1,4 @@
-package com.quadro.games.invokervscrab.view.CrabPart;
+package com.quadro.games.invokervscrab.ivc.enemy.crab.view.part;
 
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
@@ -6,8 +6,6 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
  * Created by Quadrowin on 24.11.2015.
  */
 public class Foot extends AbstractPart {
-
-    private boolean mRight = false;
 
     final private static float[][] mInnerDelta = new float[][] {
             {-0.7f, -0.7f},
@@ -23,17 +21,12 @@ public class Foot extends AbstractPart {
 
     private int mRandomIndex = 0;
 
-    public Foot(float x, float y, float scale, boolean right) {
-        super(x, y, scale);
-        mRight = right;
-    }
-
     @Override
     public void draw(ShapeRenderer sr) {
         float[] innerDelta = mInnerDelta[mRandomIndex];
 
         sr.setColor(1, 0, 0, 1);
-        float xf = (mRight ? 1 : -1);
+        float xf = 1f;
         sr.begin(ShapeRenderer.ShapeType.Filled);
 
         float[] polygon = new float[]{
