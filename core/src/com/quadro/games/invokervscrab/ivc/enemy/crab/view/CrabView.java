@@ -116,13 +116,13 @@ public class CrabView extends WidgetGroup {
     public void draw(Batch batch, float parentAlpha) {
         super.draw(batch, parentAlpha);
 
-        if (mQuestionTexture != null && false) {
+        if (mQuestionTexture != null) {
             Color c = batch.getColor();
             batch.setColor(c.r, c.g, c.b, parentAlpha);
             batch.draw(
                     mQuestionTexture,
-                    getX() - 40,
-                    getY() - 30,
+                    getX() + mBody.getX() + mBody.getWidth() / 2 - 40,
+                    getY() + mBody.getY() + mBody.getHeight() / 2 - 30,
                     80,
                     60
             );
