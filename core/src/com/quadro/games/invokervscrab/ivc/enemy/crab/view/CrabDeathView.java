@@ -3,7 +3,6 @@ package com.quadro.games.invokervscrab.ivc.enemy.crab.view;
 import com.badlogic.gdx.scenes.scene2d.ui.WidgetGroup;
 import com.quadro.games.invokervscrab.ivc.enemy.crab.view.part.AbstractPart;
 import com.quadro.games.invokervscrab.ivc.enemy.crab.view.part.Body;
-import com.quadro.games.invokervscrab.view.shape.ShapeGroup;
 
 /**
  * Created by Quadrowin on 21.12.2015.
@@ -12,7 +11,7 @@ public class CrabDeathView extends WidgetGroup {
 
     private AbstractPart[] mParts;
 
-    private ShapeGroup mPartsActor = new ShapeGroup();
+    private WidgetGroup mPartsActor;
 
     private float mTime = 9999;
 

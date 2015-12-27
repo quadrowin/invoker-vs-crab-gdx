@@ -159,6 +159,12 @@ public class FightScreen extends AbstractIvcScreen {
                 "ui-button-up-64",                  "data/ui/button64-up.png",
 
                 "ui-button-hint-text",              "data/ui/button-hint-text.png",
+
+
+                // mobs
+                "crab-skin",                        "data/units/red.png",
+                "crab-eye-white",                   "data/units/crab-eye-white.png",
+                "crab-eye-pupil",                   "data/units/crab-eye-pupil.png",
         };
         for (int i = 0; i < uiTextures.length; i += 2) {
             Texture texture = new Texture(Gdx.files.internal(uiTextures[i + 1]));
@@ -403,17 +409,17 @@ public class FightScreen extends AbstractIvcScreen {
 
         });
 
-        mTowerView = new TowerView(this);
+//        mTowerView = new TowerView(this);
 
         mProcessor.setOnCrabCreate(new CrabCallback() {
 
             @Override
             public void run(Crab crab) {
-                CrabView view = new CrabView(crab);
+                CrabView view = new CrabView(crab, mSkin);
                 Drawable question = mSkin.getDrawable(crab.getQuestion());
                 view.setQuestion(question);
                 view.randomize();
-                addStageBounds(view, 200, 150, 100, 100);
+                addStageBounds(view, 200, 150, 150, 150);
                 mEnemyViews.put(crab, view);
             }
 

@@ -1,6 +1,6 @@
 package com.quadro.games.invokervscrab.ivc.enemy.crab.view.part;
 
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.graphics.g2d.Batch;
 
 /**
  * Created by Quadrowin on 24.11.2015.
@@ -22,48 +22,75 @@ public class Foot extends AbstractPart {
     private int mRandomIndex = 0;
 
     @Override
-    public void draw(ShapeRenderer sr) {
+    public void draw (Batch batch, float parentAlpha) {
         float[] innerDelta = mInnerDelta[mRandomIndex];
 
-        sr.setColor(1, 0, 0, 1);
-        float xf = 1f;
-        sr.begin(ShapeRenderer.ShapeType.Filled);
+        float width = getWidth();
+        float height = getHeight();
 
-        float[] polygon = new float[]{
-                +10 * xf,
-                +10,
+        /*
 
-                +40 * xf + 5 * innerDelta[0] * xf,
-                -40 - 5 * innerDelta[1],
+00              04----1
+                 \   / \
+                  \ /   \
+40                 3-----2
 
-                +30 * xf + 5 * innerDelta[0] * xf,
-                -40 - 5 * innerDelta[1],
+         */
 
-                +10 * xf + 10 * innerDelta[0] * xf,
-                -80 - 10 * innerDelta[1],
+        float[] polygon1 = new float[]{
+                +00,
+                +00,
+                mWhiteColor, 0, 0,
 
-                +30 * xf + 5 * innerDelta[0] * xf,
-                -40 - 5 * innerDelta[1],
+                +20 * width / 40,
+                +00,
+                mWhiteColor, 0, 0,
 
-                +30 * xf + 5 * innerDelta[0] * xf,
-                -40 - 5 * innerDelta[1],
+                +40 * width / 40,
+                -40 * height / 80,
+                mWhiteColor, 0, 0,
 
-                -10 * xf,
-                +10,
+                +30 * width / 40,
+                -40 * height / 80,
+                mWhiteColor, 0, 0,
 
-                +10 * xf,
-                +10,
+
+
         };
 
-        for (int i = 0; i < polygon.length - 5; i += 2) {
-            sr.triangle(
-                    polygon[i + 0], polygon[i + 1],
-                    polygon[i + 2], polygon[i + 3],
-                    polygon[i + 4], polygon[i + 5]
-            );
-        }
+        /*
 
-        sr.end();
+40                 04----2
+                    |   /
+                    | /
+80                  3
+
+        */
+
+        float[] polygon2 = new float[]{
+                +30 * width / 40,
+                -40 * height / 80,
+                mWhiteColor, 0, 0,
+
+                +40 * width / 40,
+                -40 * height / 80,
+                mWhiteColor, 0, 0,
+
+                +30 * width / 40,
+                -80 * height / 80,
+                mWhiteColor, 0, 0,
+
+                +30 * width / 40,
+                -40 * height / 80,
+                mWhiteColor, 0, 0,
+        };
+
+        applyTransform(batch);
+
+        batch.draw(mTexture, polygon1, 0, polygon1.length);
+        batch.draw(mTexture, polygon2, 0, polygon2.length);
+
+        resetTransform(batch);
     }
 
     @Override

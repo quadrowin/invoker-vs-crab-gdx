@@ -3,6 +3,7 @@ package com.quadro.games.invokervscrab.ivc.enemy.crab.view;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.WidgetGroup;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable;
@@ -12,7 +13,6 @@ import com.quadro.games.invokervscrab.ivc.enemy.crab.view.part.Body;
 import com.quadro.games.invokervscrab.ivc.enemy.crab.view.part.Eye;
 import com.quadro.games.invokervscrab.ivc.enemy.crab.view.part.Foot;
 import com.quadro.games.invokervscrab.ivc.enemy.crab.view.part.Hand;
-import com.quadro.games.invokervscrab.view.shape.ShapeGroup;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,45 +30,59 @@ public class CrabView extends WidgetGroup {
 
     private List<float[]> mInitialPositions = new ArrayList<float[]>();
 
-    private ShapeGroup mPartsActor = new ShapeGroup();
+    private WidgetGroup mPartsActor = new WidgetGroup();
 
     private Texture mQuestionTexture;
 
-    public CrabView(Crab crab) {
+    public CrabView(Crab crab, Skin skin) {
+        setWidth(200);
+        setHeight(200);
         mCrab = crab;
 
-        mBody = createPart(Body.class, 0, 0, 1.5f);
+        mBody = createPart(Body.class, 0, 0, 150, 100);
+
+        Eye eyeLeft = createPart(Eye.class, 20, 95, 50);
+        Eye eyeRight = createPart(Eye.class, 75, 95, 40);
 
         mParts = new AbstractPart[] {
-                createPart(Eye.class, -25, 50, 0.5f),
-                createPart(Eye.class, 25, 50, 0.4f),
+                eyeLeft,
+                eyeRight,
                 mBody,
 
-                createPart(Hand.class, -75, 37, -0.40f),
-                createPart(Hand.class, +80, 40, +0.45f),
+                createPart(Hand.class, +00,  100, -30, -20),
+                createPart(Hand.class, +150, 100, +40, +30),
 
-                createPart(Foot.class, -05, -25, -0.50f),
-                createPart(Foot.class, -30, -35, -0.60f),
-                createPart(Foot.class, -50, -30, -0.75f),
+                // left foots
+                createPart(Foot.class, +30, 40, -40, 80),
+                createPart(Foot.class, +50, 35, -40, 80),
+                createPart(Foot.class, +70, 30, -30, 70),
 
-                createPart(Foot.class, +05, -25, 0.5f),
-                createPart(Foot.class, +30, -35, 0.60f),
-                createPart(Foot.class, +50, -30, 0.75f),
+                // right foots
+                createPart(Foot.class, +80,  30,  30, 70),
+                createPart(Foot.class, +100, 35,  40, 80),
+                createPart(Foot.class, +120, 40,  40, 80),
         };
 
         for (int i = 0; i < mParts.length; i++) {
-            mPartsActor.addShape(mParts[i]);
+            mParts[i].setTexture(skin.get("crab-skin", Texture.class));
+            mPartsActor.addActor(mParts[i]);
             mInitialPositions.add(new float[]{mParts[i].getX(), mParts[i].getY(), mParts[i].getRotation()});
         }
+
+        eyeLeft.setTexture(skin.get("crab-eye-white", Texture.class));
+        eyeLeft.setTexturePupil(skin.get("crab-eye-pupil", Texture.class));
+
+        eyeRight.setTexture(skin.get("crab-eye-white", Texture.class));
+        eyeRight.setTexturePupil(skin.get("crab-eye-pupil", Texture.class));
 
         this.addActor(mPartsActor);
     }
 
-    private <T extends AbstractPart> T createPart(Class<T> partClass, float x, float y, float scaleX) {
-        return createPart(partClass, x, y, scaleX, Math.abs(scaleX));
+    private <T extends AbstractPart> T createPart(Class<T> partClass, float x, float y, float width) {
+        return createPart(partClass, x, y, width, Math.abs(width));
     }
 
-    private <T extends AbstractPart> T createPart(Class<T> partClass, float x, float y, float scaleX, float scaleY) {
+    private <T extends AbstractPart> T createPart(Class<T> partClass, float x, float y, float width, float height) {
         T part;
         try {
             part = partClass.newInstance();
@@ -78,7 +92,7 @@ public class CrabView extends WidgetGroup {
         }
 
         part.setPosition(x, y);
-        part.setScale(scaleX, scaleY);
+        part.setSize(width, height);
 
         return part;
     }
@@ -102,7 +116,7 @@ public class CrabView extends WidgetGroup {
     public void draw(Batch batch, float parentAlpha) {
         super.draw(batch, parentAlpha);
 
-        if (mQuestionTexture != null) {
+        if (mQuestionTexture != null && false) {
             Color c = batch.getColor();
             batch.setColor(c.r, c.g, c.b, parentAlpha);
             batch.draw(
@@ -123,7 +137,7 @@ public class CrabView extends WidgetGroup {
         return mParts;
     }
 
-    public ShapeGroup getPartsActor() {
+    public WidgetGroup getPartsActor() {
         return mPartsActor;
     }
 
