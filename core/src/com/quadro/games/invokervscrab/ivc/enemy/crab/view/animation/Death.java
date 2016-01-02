@@ -8,11 +8,6 @@ import com.quadro.games.invokervscrab.ivc.enemy.crab.view.part.Body;
  */
 public class Death extends CrabAnimation {
 
-    public Death() {
-        super();
-        mTime = STOP_TIME;
-    }
-
     @Override
     public void act(float delta) {
         if (!actTime(delta)) {

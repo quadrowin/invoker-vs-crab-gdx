@@ -426,12 +426,12 @@ public class FightScreen extends AbstractIvcScreen {
                 addStageBounds(view, 200, 150, 150, 150);
                 mEnemyViews.put(crab, view);
 
-                CrabAnimation incoming = view.setNewAnimation(Incoming.class, mStage);
+                CrabAnimation incoming = view.setNewAnimation(Incoming.class);
                 incoming.setOnFinish(new AnimationCallback() {
                     @Override
                     public void run(CrabAnimation animation) {
                         crab.setAttackActive(true);
-                        view.setNewAnimation(Attack.class, mStage);
+                        view.setNewAnimation(Attack.class);
                     }
                 });
             }
@@ -447,7 +447,7 @@ public class FightScreen extends AbstractIvcScreen {
 
                 CrabView cv = mEnemyViews.remove(crab);
                 cv.setQuestion(null);
-                cv.setNewAnimation(Death.class, mStage);
+                cv.setNewAnimation(Death.class);
             }
 
         });

@@ -3,8 +3,6 @@ package com.quadro.games.invokervscrab.ivc.enemy.crab.view;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.scenes.scene2d.Group;
-import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.WidgetGroup;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
@@ -99,6 +97,12 @@ public class CrabView extends WidgetGroup {
         return part;
     }
 
+    public void act(float delta) {
+        if (mAnimation != null) {
+            mAnimation.act(delta);
+        }
+    }
+
     @Override
     public void draw(Batch batch, float parentAlpha) {
         super.draw(batch, parentAlpha);
@@ -141,11 +145,11 @@ public class CrabView extends WidgetGroup {
         if (mAnimation != null) {
             mAnimation.setCrab(null);
         }
+        mAnimation = animation;
         animation.setCrab(this);
-        animation.addActor(this);
     }
 
-    public <T extends CrabAnimation> CrabAnimation setNewAnimation(Class<T> animationClass, Group parent) {
+    public <T extends CrabAnimation> CrabAnimation setNewAnimation(Class<T> animationClass) {
         CrabAnimation animation;
         try {
             animation = animationClass.newInstance();
@@ -154,12 +158,7 @@ public class CrabView extends WidgetGroup {
             animation = new Dummy();
         }
         setAnimation(animation);
-        parent.addActor(animation);
         return animation;
-    }
-
-    public <T extends CrabAnimation> CrabAnimation setNewAnimation(Class<T> animationClass, Stage stage) {
-        return setNewAnimation(animationClass, stage.getRoot());
     }
 
     public void setQuestion(Drawable question) {

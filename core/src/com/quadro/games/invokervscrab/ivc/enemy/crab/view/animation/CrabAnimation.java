@@ -1,13 +1,12 @@
 package com.quadro.games.invokervscrab.ivc.enemy.crab.view.animation;
 
-import com.badlogic.gdx.scenes.scene2d.ui.WidgetGroup;
 import com.quadro.games.invokervscrab.ivc.enemy.crab.AnimationCallback;
 import com.quadro.games.invokervscrab.ivc.enemy.crab.view.CrabView;
 
 /**
  * Created by Quadrowin on 31.12.2015.
  */
-abstract public class CrabAnimation extends WidgetGroup {
+abstract public class CrabAnimation {
 
     protected static final float STOP_TIME = Float.MAX_VALUE;
 
@@ -15,9 +14,9 @@ abstract public class CrabAnimation extends WidgetGroup {
 
     private AnimationCallback mOnFinish;
 
-    private boolean mRemoveAfterFinish = true;
-
     protected float mTime = STOP_TIME;
+
+    abstract public void act(float delta);
 
     protected boolean actTime(float delta) {
         if (mTime > getDuration()) {
@@ -35,9 +34,6 @@ abstract public class CrabAnimation extends WidgetGroup {
         if (mOnFinish != null) {
             mOnFinish.run(this);
         }
-        if (mRemoveAfterFinish) {
-            remove();
-        }
     }
 
     /**
@@ -54,10 +50,6 @@ abstract public class CrabAnimation extends WidgetGroup {
 
     public void setOnFinish(AnimationCallback callback) {
         mOnFinish = callback;
-    }
-
-    public void setRemoveAfterFinish(boolean remove) {
-        mRemoveAfterFinish = remove;
     }
 
 }

@@ -10,8 +10,6 @@ public class Attack extends CrabAnimation {
 
     @Override
     public void act (float delta) {
-        super.act(delta);
-
         AbstractPart[] parts = mCrab.getParts();
         float attackAnimationFrame = mCrab.getCrab().getAttackFrame();
         for (int i = 0; i < parts.length; i++) {
