@@ -4,7 +4,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.NinePatch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -12,11 +11,9 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
-import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.quadro.games.invokervscrab.IvcGame;
@@ -73,10 +70,10 @@ import java.util.Map;
 /**
  * Created by Quadrowin on 27.11.2015.
  */
-public class FightScreen extends AbstractIvcScreen {
+public class FightScreen extends AbstractScreen {
 
     private TextButton.TextButtonStyle textButtonStyle;
-    private BitmapFont font;
+    private BitmapFont mFont;
     private TextureAtlas buttonAtlas;
 
     private final List<ImageButton> mBuffStack = new ArrayList<ImageButton>();
@@ -103,10 +100,7 @@ public class FightScreen extends AbstractIvcScreen {
         mStage.setViewport(new FitViewport(viewportWidth, viewportHeight));
         mStage.getViewport().update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
 
-        mSkin = new Skin();
-
-        font = new BitmapFont();
-        mSkin.add("default", font, BitmapFont.class);
+        mFont = mSkin.getFont("default");
 
         buttonAtlas = new TextureAtlas(Gdx.files.internal("data/ui/button.pack"));
         mSkin.addRegions(buttonAtlas);
@@ -155,16 +149,6 @@ public class FightScreen extends AbstractIvcScreen {
         }
 
         String[] uiTextures = new String[] {
-                // ui
-                "ui-button-down-32",               "data/ui/button32-down.png",
-                "ui-button-up-32",                 "data/ui/button32-up.png",
-
-                "ui-button-down-64",                "data/ui/button64-down.png",
-                "ui-button-up-64",                  "data/ui/button64-up.png",
-
-                "ui-button-hint-text",              "data/ui/button-hint-text.png",
-
-
                 // mobs
                 "crab-skin",                        "data/units/red.png",
                 "crab-eye-white",                   "data/units/crab-eye-white.png",
@@ -187,34 +171,13 @@ public class FightScreen extends AbstractIvcScreen {
             mSkin.add(drawableSpriteCopy[i], new SpriteDrawable(dr), Drawable.class);
         }
 
-        NinePatch patchUp = new NinePatch(
-                mSkin.get("ui-button-up-64", Texture.class),
-                16, 16, 16, 16
-        );
-
-        NinePatch patchDown = new NinePatch(
-                mSkin.get("ui-button-down-64", Texture.class),
-                16, 16, 16, 16
-        );
-
-        mSkin.add(
-                "ui-button-up-64",
-                new NinePatchDrawable(patchUp),
-                Drawable.class
-        );
-        mSkin.add(
-                "ui-button-down-64",
-                new NinePatchDrawable(patchDown),
-                Drawable.class
-        );
-
         textButtonStyle = new TextButton.TextButtonStyle(
                 mSkin.getDrawable("ui-button-up-64"),
                 mSkin.getDrawable("ui-button-down-64"),
                 null,
-                font
+                mFont
         );
-//        textButtonStyle.font = font;
+//        textButtonStyle.font = mFont;
 //        textButtonStyle.up = mSkin.getDrawable("ui-button-up");
 //        textButtonStyle.down = mSkin.getDrawable("ui-button-down");
 //        textButtonStyle.checked = skin.getDrawable("checked-button");
@@ -223,7 +186,7 @@ public class FightScreen extends AbstractIvcScreen {
         mSkin.add("transparent", transparent, Drawable.class);
         mSkin.add(MixedFirstSkill.class.getName(), transparent, Drawable.class);
         mSkin.add(MixedSecondSkill.class.getName(), transparent, Drawable.class);
-        Label.LabelStyle mpCostLabelStyle = new Label.LabelStyle(font, Color.WHITE);
+        Label.LabelStyle mpCostLabelStyle = new Label.LabelStyle(mFont, Color.WHITE);
         mpCostLabelStyle.background = new ColorDrawable(Color.BLUE);
         mSkin.add("label-style-mp-cost", mpCostLabelStyle, Label.LabelStyle.class);
 
@@ -364,7 +327,7 @@ public class FightScreen extends AbstractIvcScreen {
         }
         mStage.addActor(mHintPanel);
 
-        final AbstractIvcScreen screen = this;
+        final AbstractScreen screen = this;
 
         // Миксованные скилы
         mProcessor.setOnMixedChange(new GameCallback() {

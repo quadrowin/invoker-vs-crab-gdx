@@ -12,7 +12,7 @@ import com.quadro.games.invokervscrab.ivc.IvcProcessor;
 /**
  * Created by Quadrowin on 27.11.2015.
  */
-public abstract class AbstractIvcScreen implements Screen {
+public abstract class AbstractScreen implements Screen {
 
     protected Stage mStage;
 
@@ -27,10 +27,11 @@ public abstract class AbstractIvcScreen implements Screen {
      */
     protected float mPx = 2;
 
-    public AbstractIvcScreen(IvcGame game) {
+    public AbstractScreen(IvcGame game) {
         mGame = game;
         mProcessor = SL.getGame();
         mStage = new Stage();
+        mSkin = game.getNewSkin();
         Gdx.input.setInputProcessor(mStage);
     }
 

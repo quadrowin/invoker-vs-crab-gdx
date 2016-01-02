@@ -8,14 +8,14 @@ import com.badlogic.gdx.utils.Align;
 import com.quadro.games.invokervscrab.SL;
 import com.quadro.games.invokervscrab.ivc.GameObjectState;
 import com.quadro.games.invokervscrab.ivc.LevelParams;
-import com.quadro.games.invokervscrab.screen.AbstractIvcScreen;
+import com.quadro.games.invokervscrab.screen.AbstractScreen;
 
 /**
  * Created by Quadrowin on 14.12.2015.
  */
 public class ExpBar extends AbstractBar {
 
-    public ExpBar(AbstractIvcScreen screen) {
+    public ExpBar(AbstractScreen screen) {
         Skin skin = screen.getSkin();
         ProgressBar.ProgressBarStyle barStyle = new ProgressBar.ProgressBarStyle(
                 skin.newDrawable("button-down", Color.DARK_GRAY),

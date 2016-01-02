@@ -6,7 +6,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.utils.Align;
 import com.quadro.games.invokervscrab.ivc.skill.SkillItem;
-import com.quadro.games.invokervscrab.screen.AbstractIvcScreen;
+import com.quadro.games.invokervscrab.screen.AbstractScreen;
 
 /**
  * Created by Quadrowin on 16.12.2015.
@@ -23,7 +23,7 @@ public class SkillButton {
 
     private Label mMpLabel;
 
-    public SkillButton(AbstractIvcScreen screen, SkillItem skill, ClickListener clickListener, float x, float y) {
+    public SkillButton(AbstractScreen screen, SkillItem skill, ClickListener clickListener, float x, float y) {
         Drawable dr = screen.getSkin().getDrawable(skill.getWorkerName());
 
         mButtonStyle = new ImageButton.ImageButtonStyle(null, null, null, dr, null, null);
@@ -48,7 +48,7 @@ public class SkillButton {
         mButton.addListener(clickListener);
     }
 
-    public void setSkill(AbstractIvcScreen screen, SkillItem skill) {
+    public void setSkill(AbstractScreen screen, SkillItem skill) {
         if (skill == null) {
             mButtonStyle.imageUp = screen.getSkin().getDrawable("transparent");
             mMpLabel.setVisible(false);

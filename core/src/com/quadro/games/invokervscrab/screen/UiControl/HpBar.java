@@ -6,7 +6,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.ProgressBar;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.Align;
 import com.quadro.games.invokervscrab.ivc.GameObjectState;
-import com.quadro.games.invokervscrab.screen.AbstractIvcScreen;
+import com.quadro.games.invokervscrab.screen.AbstractScreen;
 
 /**
  * Created by Quadrowin on 14.12.2015.
@@ -15,7 +15,7 @@ public class HpBar extends AbstractBar {
 
     private Label mLabelRegen;
 
-    public HpBar (AbstractIvcScreen screen) {
+    public HpBar (AbstractScreen screen) {
         Skin skin = screen.getSkin();
 
         ProgressBar.ProgressBarStyle barStyle = new ProgressBar.ProgressBarStyle(

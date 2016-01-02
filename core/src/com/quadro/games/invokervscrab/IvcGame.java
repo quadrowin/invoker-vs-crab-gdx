@@ -5,8 +5,13 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.FPSLogger;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.NinePatch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.quadro.games.invokervscrab.screen.AbstractIvcScreen;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
+import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
+import com.quadro.games.invokervscrab.screen.AbstractScreen;
 import com.quadro.games.invokervscrab.screen.FightScreen;
 
 public class IvcGame extends ApplicationAdapter {
@@ -17,9 +22,11 @@ public class IvcGame extends ApplicationAdapter {
 
     private FPSLogger mFps;
 
-    private AbstractIvcScreen mScreen;
+    private Skin mSkin;
 
-    private Class<AbstractIvcScreen> mSwitchToScreen;
+    private AbstractScreen mScreen;
+
+    private Class<AbstractScreen> mSwitchToScreen;
 
 	@Override
 	public void create () {
@@ -29,7 +36,85 @@ public class IvcGame extends ApplicationAdapter {
         mScreen = new FightScreen(this);
 	}
 
-    public AbstractIvcScreen getScreen() {
+    public Skin getSkin() {
+        if (mSkin != null) {
+            return mSkin;
+        }
+        mSkin = new Skin();
+
+        BitmapFont font = new BitmapFont();
+        mSkin.add("default", font, BitmapFont.class);
+
+        String[] uiTextures = new String[] {
+                "ui-button-hint-text",              "data/ui/button-hint-text.png",
+
+                "ui-button-down-32",               "data/ui/button32-down.png",
+                "ui-button-up-32",                 "data/ui/button32-up.png",
+
+                "ui-button-down-64",                "data/ui/button64-down.png",
+                "ui-button-up-64",                  "data/ui/button64-up.png",
+        };
+        for (int i = 0; i < uiTextures.length; i += 2) {
+            Texture texture = new Texture(Gdx.files.internal(uiTextures[i + 1]));
+            mSkin.add(uiTextures[i], texture);
+        }
+
+        NinePatch patchUp = new NinePatch(
+                mSkin.get("ui-button-up-64", Texture.class),
+                16, 16, 16, 16
+        );
+
+        NinePatch patchDown = new NinePatch(
+                mSkin.get("ui-button-down-64", Texture.class),
+                16, 16, 16, 16
+        );
+
+        mSkin.add(
+                "ui-button-up-64",
+                new NinePatchDrawable(patchUp),
+                Drawable.class
+        );
+        mSkin.add(
+                "ui-button-down-64",
+                new NinePatchDrawable(patchDown),
+                Drawable.class
+        );
+
+        return mSkin;
+    }
+
+    /**
+     * Создание нового скина с базовыми ресурсами
+     * @return
+     */
+    public Skin getNewSkin() {
+        Skin src = getSkin();
+        Skin dst = new Skin();
+
+        dst.add("default", src.getFont("default"), BitmapFont.class);
+
+        String[] copyTextures = new String[] {
+                "ui-button-hint-text",
+
+                "ui-button-down-32",
+                "ui-button-up-32",
+
+                "ui-button-down-64",
+                "ui-button-up-64",
+        };
+
+        for (int i = 0; i < copyTextures.length; i++) {
+            dst.add(
+                    copyTextures[i],
+                    src.get(copyTextures[i], Texture.class),
+                    Texture.class
+            );
+        }
+
+        return dst;
+    }
+
+    public AbstractScreen getScreen() {
         return mScreen;
     }
 
@@ -48,7 +133,7 @@ public class IvcGame extends ApplicationAdapter {
 //		batch.draw(img, 0, 0);
 //		batch.end();
 
-        AbstractIvcScreen currentScreen = getScreen();
+        AbstractScreen currentScreen = getScreen();
 
         // update the screen
         currentScreen.render(Gdx.graphics.getDeltaTime());
@@ -82,7 +167,7 @@ public class IvcGame extends ApplicationAdapter {
         }
     }
 
-    public void switchToScreen(Class<AbstractIvcScreen> screenClass) {
+    public void switchToScreen(Class<AbstractScreen> screenClass) {
         mSwitchToScreen = screenClass;
     }
 
