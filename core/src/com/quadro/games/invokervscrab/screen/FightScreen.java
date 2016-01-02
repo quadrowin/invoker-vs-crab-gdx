@@ -172,8 +172,8 @@ public class FightScreen extends AbstractScreen {
         }
 
         textButtonStyle = new TextButton.TextButtonStyle(
-                mSkin.getDrawable("ui-button-up-64"),
-                mSkin.getDrawable("ui-button-down-64"),
+                mSkin.getDrawable("ui-button-up-64-np"),
+                mSkin.getDrawable("ui-button-down-64-np"),
                 null,
                 mFont
         );

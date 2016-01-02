@@ -12,13 +12,13 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import com.quadro.games.invokervscrab.screen.AbstractScreen;
-import com.quadro.games.invokervscrab.screen.FightScreen;
+import com.quadro.games.invokervscrab.screen.MainMenuScreen;
 
 public class IvcGame extends ApplicationAdapter {
 
-	SpriteBatch batch;
+	private SpriteBatch batch;
 
-	Texture img;
+	private Texture img;
 
     private FPSLogger mFps;
 
@@ -26,14 +26,15 @@ public class IvcGame extends ApplicationAdapter {
 
     private AbstractScreen mScreen;
 
-    private Class<AbstractScreen> mSwitchToScreen;
+    private Class<? extends AbstractScreen> mSwitchToScreen;
 
 	@Override
 	public void create () {
 		batch = new SpriteBatch();
 		img = new Texture("badlogic.jpg");
         mFps = new FPSLogger();
-        mScreen = new FightScreen(this);
+//        mScreen = new FightScreen(this);
+        mScreen = new MainMenuScreen(this);
 	}
 
     public Skin getSkin() {
@@ -48,8 +49,8 @@ public class IvcGame extends ApplicationAdapter {
         String[] uiTextures = new String[] {
                 "ui-button-hint-text",              "data/ui/button-hint-text.png",
 
-                "ui-button-down-32",               "data/ui/button32-down.png",
-                "ui-button-up-32",                 "data/ui/button32-up.png",
+                "ui-button-down-32",                "data/ui/button32-down.png",
+                "ui-button-up-32",                  "data/ui/button32-up.png",
 
                 "ui-button-down-64",                "data/ui/button64-down.png",
                 "ui-button-up-64",                  "data/ui/button64-up.png",
@@ -70,12 +71,12 @@ public class IvcGame extends ApplicationAdapter {
         );
 
         mSkin.add(
-                "ui-button-up-64",
+                "ui-button-up-64-np",
                 new NinePatchDrawable(patchUp),
                 Drawable.class
         );
         mSkin.add(
-                "ui-button-down-64",
+                "ui-button-down-64-np",
                 new NinePatchDrawable(patchDown),
                 Drawable.class
         );
@@ -108,6 +109,19 @@ public class IvcGame extends ApplicationAdapter {
                     copyTextures[i],
                     src.get(copyTextures[i], Texture.class),
                     Texture.class
+            );
+        }
+
+        String[] copyDrawables = new String[] {
+                "ui-button-down-64-np",
+                "ui-button-up-64-np",
+        };
+
+        for (int i = 0; i < copyDrawables.length; i++) {
+            dst.add(
+                    copyDrawables[i],
+                    src.getDrawable(copyDrawables[i]),
+                    Drawable.class
             );
         }
 
@@ -148,6 +162,7 @@ public class IvcGame extends ApplicationAdapter {
             } catch (Exception e) {
                 e.printStackTrace();
             }
+            mSwitchToScreen = null;
         }
 
         mFps.log();
@@ -167,7 +182,7 @@ public class IvcGame extends ApplicationAdapter {
         }
     }
 
-    public void switchToScreen(Class<AbstractScreen> screenClass) {
+    public void switchToScreen(Class<? extends AbstractScreen> screenClass) {
         mSwitchToScreen = screenClass;
     }
 
