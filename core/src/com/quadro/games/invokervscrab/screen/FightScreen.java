@@ -31,10 +31,14 @@ import com.quadro.games.invokervscrab.ivc.effect.worker.BottleEffect;
 import com.quadro.games.invokervscrab.ivc.effect.worker.RuneExortEffect;
 import com.quadro.games.invokervscrab.ivc.effect.worker.RuneQuasEffect;
 import com.quadro.games.invokervscrab.ivc.effect.worker.RuneWexEffect;
+import com.quadro.games.invokervscrab.ivc.enemy.crab.AnimationCallback;
 import com.quadro.games.invokervscrab.ivc.enemy.crab.Crab;
 import com.quadro.games.invokervscrab.ivc.enemy.crab.CrabCallback;
-import com.quadro.games.invokervscrab.ivc.enemy.crab.view.CrabDeathView;
 import com.quadro.games.invokervscrab.ivc.enemy.crab.view.CrabView;
+import com.quadro.games.invokervscrab.ivc.enemy.crab.view.animation.Attack;
+import com.quadro.games.invokervscrab.ivc.enemy.crab.view.animation.CrabAnimation;
+import com.quadro.games.invokervscrab.ivc.enemy.crab.view.animation.Death;
+import com.quadro.games.invokervscrab.ivc.enemy.crab.view.animation.Incoming;
 import com.quadro.games.invokervscrab.ivc.enemy.tower.TowerView;
 import com.quadro.games.invokervscrab.ivc.skill.SkillItem;
 import com.quadro.games.invokervscrab.ivc.skill.thing.BottleSkill;
@@ -414,13 +418,22 @@ public class FightScreen extends AbstractIvcScreen {
         mProcessor.setOnCrabCreate(new CrabCallback() {
 
             @Override
-            public void run(Crab crab) {
-                CrabView view = new CrabView(crab, mSkin);
+            public void run(final Crab crab) {
+                final CrabView view = new CrabView(crab, mSkin);
                 Drawable question = mSkin.getDrawable(crab.getQuestion());
                 view.setQuestion(question);
                 view.randomize();
                 addStageBounds(view, 200, 150, 150, 150);
                 mEnemyViews.put(crab, view);
+
+                CrabAnimation incoming = view.setNewAnimation(Incoming.class, mStage);
+                incoming.setOnFinish(new AnimationCallback() {
+                    @Override
+                    public void run(CrabAnimation animation) {
+                        crab.setAttackActive(true);
+                        view.setNewAnimation(Attack.class, mStage);
+                    }
+                });
             }
 
         });
@@ -432,9 +445,9 @@ public class FightScreen extends AbstractIvcScreen {
                 IvcProcessor game = SL.getGame();
                 game.getPlayer().incExperience(game.getLeveling().getParams(1).getExpForUnit() * 5);
 
-                CrabView liveView = mEnemyViews.remove(crab);
-                CrabDeathView deathView = new CrabDeathView();
-                deathView.assignFrom(liveView);
+                CrabView cv = mEnemyViews.remove(crab);
+                cv.setQuestion(null);
+                cv.setNewAnimation(Death.class, mStage);
             }
 
         });

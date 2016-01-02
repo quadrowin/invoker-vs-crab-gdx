@@ -6,6 +6,11 @@ package com.quadro.games.invokervscrab.ivc.enemy.crab;
 public class Crab {
 
     /**
+     * Активна ли атака сейчас
+     */
+    private boolean mAttackActive = false;
+
+    /**
      * Время на одну атаку
      */
     private float mAttackOneTime = 2;
@@ -36,7 +41,8 @@ public class Crab {
         return mQuestion;
     }
 
-    public void resetAttackAnimation() {
+    public void setAttackActive(boolean active) {
+        mAttackActive = active;
         mAttackCurrentTime = 0;
     }
 
@@ -49,6 +55,9 @@ public class Crab {
     }
 
     public void update(float delta) {
+        if (!mAttackActive) {
+            return;
+        }
         mAttackCurrentTime += delta;
         while (mAttackCurrentTime > mAttackOneTime) {
             mAttackCurrentTime -= mAttackOneTime;

@@ -3,11 +3,15 @@ package com.quadro.games.invokervscrab.ivc.enemy.crab.view;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.scenes.scene2d.Group;
+import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.WidgetGroup;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable;
 import com.quadro.games.invokervscrab.ivc.enemy.crab.Crab;
+import com.quadro.games.invokervscrab.ivc.enemy.crab.view.animation.CrabAnimation;
+import com.quadro.games.invokervscrab.ivc.enemy.crab.view.animation.Dummy;
 import com.quadro.games.invokervscrab.ivc.enemy.crab.view.part.AbstractPart;
 import com.quadro.games.invokervscrab.ivc.enemy.crab.view.part.Body;
 import com.quadro.games.invokervscrab.ivc.enemy.crab.view.part.Eye;
@@ -22,6 +26,8 @@ import java.util.List;
  */
 public class CrabView extends WidgetGroup {
 
+    private CrabAnimation mAnimation;
+
     private Crab mCrab;
 
     private Body mBody;
@@ -29,8 +35,6 @@ public class CrabView extends WidgetGroup {
     private AbstractPart[] mParts;
 
     private List<float[]> mInitialPositions = new ArrayList<float[]>();
-
-    private WidgetGroup mPartsActor = new WidgetGroup();
 
     private Texture mQuestionTexture;
 
@@ -65,7 +69,7 @@ public class CrabView extends WidgetGroup {
 
         for (int i = 0; i < mParts.length; i++) {
             mParts[i].setTexture(skin.get("crab-skin", Texture.class));
-            mPartsActor.addActor(mParts[i]);
+            this.addActor(mParts[i]);
             mInitialPositions.add(new float[]{mParts[i].getX(), mParts[i].getY(), mParts[i].getRotation()});
         }
 
@@ -74,8 +78,6 @@ public class CrabView extends WidgetGroup {
 
         eyeRight.setTexture(skin.get("crab-eye-white", Texture.class));
         eyeRight.setTexturePupil(skin.get("crab-eye-pupil", Texture.class));
-
-        this.addActor(mPartsActor);
     }
 
     private <T extends AbstractPart> T createPart(Class<T> partClass, float x, float y, float width) {
@@ -97,34 +99,18 @@ public class CrabView extends WidgetGroup {
         return part;
     }
 
-
-    @Override
-    public void act (float delta) {
-        super.act(delta);
-
-        AbstractPart[] parts = mParts;
-        float attackAnimationFrame = mCrab.getAttackFrame();
-        for (int i = 0; i < parts.length; i++) {
-            AbstractPart p = parts[i];
-            if (p instanceof Hand) {
-                ((Hand)p).setAttackFrame( attackAnimationFrame );
-            }
-        }
-    }
-
     @Override
     public void draw(Batch batch, float parentAlpha) {
         super.draw(batch, parentAlpha);
 
         if (mQuestionTexture != null) {
-            Color c = batch.getColor();
-            batch.setColor(c.r, c.g, c.b, parentAlpha);
+            batch.setColor(Color.WHITE.r, Color.WHITE.g, Color.WHITE.b, parentAlpha);
             batch.draw(
                     mQuestionTexture,
-                    getX() + mBody.getX() + mBody.getWidth() / 2 - 40,
-                    getY() + mBody.getY() + mBody.getHeight() / 2 - 30,
-                    80,
-                    60
+                    getX() + mBody.getX() + (mBody.getWidth() / 2 - 40) * getScaleX(),
+                    getY() + mBody.getY() + (mBody.getHeight() / 2 - 30) * getScaleY(),
+                    80 * getScaleX(),
+                    60 * getScaleY()
             );
         }
     }
@@ -137,14 +123,43 @@ public class CrabView extends WidgetGroup {
         return mParts;
     }
 
-    public WidgetGroup getPartsActor() {
-        return mPartsActor;
-    }
-
     public void randomize() {
         for (int i = 0; i < mParts.length; i++) {
             mParts[i].randomize();
         }
+    }
+
+    public void resetPartPositions() {
+        setScale(1);
+        for (int i = 0; i < mParts.length; i++) {
+            mParts[i].setPosition(mInitialPositions.get(i)[0], mInitialPositions.get(i)[1]);
+            mParts[i].setRotation(mInitialPositions.get(i)[2]);
+        }
+    }
+
+    public void setAnimation(CrabAnimation animation) {
+        if (mAnimation != null) {
+            mAnimation.setCrab(null);
+        }
+        animation.setCrab(this);
+        animation.addActor(this);
+    }
+
+    public <T extends CrabAnimation> CrabAnimation setNewAnimation(Class<T> animationClass, Group parent) {
+        CrabAnimation animation;
+        try {
+            animation = animationClass.newInstance();
+        } catch (Exception e) {
+            e.printStackTrace();
+            animation = new Dummy();
+        }
+        setAnimation(animation);
+        parent.addActor(animation);
+        return animation;
+    }
+
+    public <T extends CrabAnimation> CrabAnimation setNewAnimation(Class<T> animationClass, Stage stage) {
+        return setNewAnimation(animationClass, stage.getRoot());
     }
 
     public void setQuestion(Drawable question) {
