@@ -1,13 +1,14 @@
-package com.quadro.games.invokervscrab.ivc.enemy.crab.view;
+package com.quadro.games.invokervscrab.ivc.enemy.crab.view.animation;
 
 import com.badlogic.gdx.scenes.scene2d.ui.WidgetGroup;
+import com.quadro.games.invokervscrab.ivc.enemy.crab.view.CrabView;
 import com.quadro.games.invokervscrab.ivc.enemy.crab.view.part.AbstractPart;
 import com.quadro.games.invokervscrab.ivc.enemy.crab.view.part.Body;
 
 /**
  * Created by Quadrowin on 21.12.2015.
  */
-public class CrabDeathView extends WidgetGroup {
+public class Death extends WidgetGroup {
 
     private AbstractPart[] mParts;
 
