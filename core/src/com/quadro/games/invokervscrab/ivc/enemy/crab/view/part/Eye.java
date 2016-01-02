@@ -3,6 +3,7 @@ package com.quadro.games.invokervscrab.ivc.enemy.crab.view.part;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.quadro.games.invokervscrab.view.AbstractPart;
 
 /**
  * Created by Quadrowin on 24.11.2015.

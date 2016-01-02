@@ -1,4 +1,4 @@
-package com.quadro.games.invokervscrab.ivc.enemy.crab.view.part;
+package com.quadro.games.invokervscrab.view;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;

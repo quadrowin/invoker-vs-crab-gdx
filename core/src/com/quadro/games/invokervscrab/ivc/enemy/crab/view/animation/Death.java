@@ -1,6 +1,6 @@
 package com.quadro.games.invokervscrab.ivc.enemy.crab.view.animation;
 
-import com.quadro.games.invokervscrab.ivc.enemy.crab.view.part.AbstractPart;
+import com.quadro.games.invokervscrab.view.AbstractPart;
 import com.quadro.games.invokervscrab.ivc.enemy.crab.view.part.Body;
 
 /**

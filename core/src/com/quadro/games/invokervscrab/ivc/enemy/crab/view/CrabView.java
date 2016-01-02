@@ -4,17 +4,15 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.WidgetGroup;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable;
+import com.quadro.games.invokervscrab.ivc.enemy.EnemyView;
 import com.quadro.games.invokervscrab.ivc.enemy.crab.Crab;
-import com.quadro.games.invokervscrab.ivc.enemy.crab.view.animation.CrabAnimation;
-import com.quadro.games.invokervscrab.ivc.enemy.crab.view.animation.Dummy;
-import com.quadro.games.invokervscrab.ivc.enemy.crab.view.part.AbstractPart;
 import com.quadro.games.invokervscrab.ivc.enemy.crab.view.part.Body;
 import com.quadro.games.invokervscrab.ivc.enemy.crab.view.part.Eye;
 import com.quadro.games.invokervscrab.ivc.enemy.crab.view.part.Foot;
 import com.quadro.games.invokervscrab.ivc.enemy.crab.view.part.Hand;
+import com.quadro.games.invokervscrab.view.AbstractPart;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,9 +20,7 @@ import java.util.List;
 /**
  * Created by Quadrowin on 05.12.2015.
  */
-public class CrabView extends WidgetGroup {
-
-    private CrabAnimation mAnimation;
+public class CrabView extends EnemyView {
 
     private Crab mCrab;
 
@@ -97,12 +93,6 @@ public class CrabView extends WidgetGroup {
         return part;
     }
 
-    public void act(float delta) {
-        if (mAnimation != null) {
-            mAnimation.act(delta);
-        }
-    }
-
     @Override
     public void draw(Batch batch, float parentAlpha) {
         super.draw(batch, parentAlpha);
@@ -139,26 +129,6 @@ public class CrabView extends WidgetGroup {
             mParts[i].setPosition(mInitialPositions.get(i)[0], mInitialPositions.get(i)[1]);
             mParts[i].setRotation(mInitialPositions.get(i)[2]);
         }
-    }
-
-    public void setAnimation(CrabAnimation animation) {
-        if (mAnimation != null) {
-            mAnimation.setCrab(null);
-        }
-        mAnimation = animation;
-        animation.setCrab(this);
-    }
-
-    public <T extends CrabAnimation> CrabAnimation setNewAnimation(Class<T> animationClass) {
-        CrabAnimation animation;
-        try {
-            animation = animationClass.newInstance();
-        } catch (Exception e) {
-            e.printStackTrace();
-            animation = new Dummy();
-        }
-        setAnimation(animation);
-        return animation;
     }
 
     public void setQuestion(Drawable question) {

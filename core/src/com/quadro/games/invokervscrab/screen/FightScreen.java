@@ -31,12 +31,10 @@ import com.quadro.games.invokervscrab.ivc.effect.worker.BottleEffect;
 import com.quadro.games.invokervscrab.ivc.effect.worker.RuneExortEffect;
 import com.quadro.games.invokervscrab.ivc.effect.worker.RuneQuasEffect;
 import com.quadro.games.invokervscrab.ivc.effect.worker.RuneWexEffect;
-import com.quadro.games.invokervscrab.ivc.enemy.crab.AnimationCallback;
 import com.quadro.games.invokervscrab.ivc.enemy.crab.Crab;
 import com.quadro.games.invokervscrab.ivc.enemy.crab.CrabCallback;
 import com.quadro.games.invokervscrab.ivc.enemy.crab.view.CrabView;
 import com.quadro.games.invokervscrab.ivc.enemy.crab.view.animation.Attack;
-import com.quadro.games.invokervscrab.ivc.enemy.crab.view.animation.CrabAnimation;
 import com.quadro.games.invokervscrab.ivc.enemy.crab.view.animation.Death;
 import com.quadro.games.invokervscrab.ivc.enemy.crab.view.animation.Incoming;
 import com.quadro.games.invokervscrab.ivc.enemy.tower.TowerView;
@@ -62,6 +60,8 @@ import com.quadro.games.invokervscrab.screen.UiControl.ExpBar;
 import com.quadro.games.invokervscrab.screen.UiControl.HpBar;
 import com.quadro.games.invokervscrab.screen.UiControl.MpBar;
 import com.quadro.games.invokervscrab.screen.UiControl.SkillButton;
+import com.quadro.games.invokervscrab.view.AbstractAnimation;
+import com.quadro.games.invokervscrab.view.AnimationCallback;
 import com.quadro.games.invokervscrab.view.ColorDrawable;
 import com.quadro.games.invokervscrab.view.EmptyDrawable;
 
@@ -426,13 +426,16 @@ public class FightScreen extends AbstractIvcScreen {
                 addStageBounds(view, 200, 150, 150, 150);
                 mEnemyViews.put(crab, view);
 
-                CrabAnimation incoming = view.setNewAnimation(Incoming.class);
+                AbstractAnimation incoming = view.setNewAnimation(Incoming.class);
                 incoming.setOnFinish(new AnimationCallback() {
+
                     @Override
-                    public void run(CrabAnimation animation) {
+                    public void run(AbstractAnimation animation) {
                         crab.setAttackActive(true);
+                        view.resetPartPositions();
                         view.setNewAnimation(Attack.class);
                     }
+
                 });
             }
 
