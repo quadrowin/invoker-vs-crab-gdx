@@ -2,13 +2,15 @@ package com.quadro.games.invokervscrab;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.FPSLogger;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.NinePatch;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import com.quadro.games.invokervscrab.screen.AbstractScreen;
@@ -16,22 +18,14 @@ import com.quadro.games.invokervscrab.screen.MainMenuScreen;
 
 public class IvcGame extends ApplicationAdapter {
 
-	private SpriteBatch batch;
-
-	private Texture img;
-
     private FPSLogger mFps;
 
     private Skin mSkin;
 
     private AbstractScreen mScreen;
 
-    private Class<? extends AbstractScreen> mSwitchToScreen;
-
 	@Override
 	public void create () {
-		batch = new SpriteBatch();
-		img = new Texture("badlogic.jpg");
         mFps = new FPSLogger();
 //        mScreen = new FightScreen(this);
         mScreen = new MainMenuScreen(this);
@@ -46,19 +40,18 @@ public class IvcGame extends ApplicationAdapter {
         BitmapFont font = new BitmapFont();
         mSkin.add("default", font, BitmapFont.class);
 
-        String[] uiTextures = new String[] {
-                "ui-button-hint-text",              "data/ui/button-hint-text.png",
+        SL.getLoaderService().loadTextures(
+                mSkin,
+                new String[]{
+                        "ui-button-hint-text", "data/ui/button-hint-text.png",
 
-                "ui-button-down-32",                "data/ui/button32-down.png",
-                "ui-button-up-32",                  "data/ui/button32-up.png",
+                        "ui-button-down-32", "data/ui/button32-down.png",
+                        "ui-button-up-32", "data/ui/button32-up.png",
 
-                "ui-button-down-64",                "data/ui/button64-down.png",
-                "ui-button-up-64",                  "data/ui/button64-up.png",
-        };
-        for (int i = 0; i < uiTextures.length; i += 2) {
-            Texture texture = new Texture(Gdx.files.internal(uiTextures[i + 1]));
-            mSkin.add(uiTextures[i], texture);
-        }
+                        "ui-button-down-64", "data/ui/button64-down.png",
+                        "ui-button-up-64", "data/ui/button64-up.png",
+                }
+        );
 
         NinePatch patchUp = new NinePatch(
                 mSkin.get("ui-button-up-64", Texture.class),
@@ -80,6 +73,18 @@ public class IvcGame extends ApplicationAdapter {
                 new NinePatchDrawable(patchDown),
                 Drawable.class
         );
+
+        Label.LabelStyle menuButtonLabelStyle = new Label.LabelStyle(font, Color.WHITE);
+        mSkin.add("label-style-menu-button", menuButtonLabelStyle, Label.LabelStyle.class);
+
+
+        TextButton.TextButtonStyle textButtonStyle = new TextButton.TextButtonStyle(
+                mSkin.getDrawable("ui-button-up-64-np"),
+                mSkin.getDrawable("ui-button-down-64-np"),
+                null,
+                font
+        );
+        mSkin.add("text-button-style-default", textButtonStyle);
 
         return mSkin;
     }
@@ -125,6 +130,18 @@ public class IvcGame extends ApplicationAdapter {
             );
         }
 
+        dst.add(
+                "label-style-menu-button",
+                src.get("label-style-menu-button", Label.LabelStyle.class),
+                Label.LabelStyle.class
+        );
+
+        dst.add(
+                "text-button-style-default",
+                src.get("text-button-style-default", TextButton.TextButtonStyle.class),
+                TextButton.TextButtonStyle.class
+        );
+
         return dst;
     }
 
@@ -147,23 +164,8 @@ public class IvcGame extends ApplicationAdapter {
 //		batch.draw(img, 0, 0);
 //		batch.end();
 
-        AbstractScreen currentScreen = getScreen();
-
         // update the screen
-        currentScreen.render(Gdx.graphics.getDeltaTime());
-
-        // if the current screen is a main menu screen we switch to
-        // the game loop
-        if (mSwitchToScreen != null) {
-            // dispose the resources of the current screen
-            currentScreen.dispose();
-            try {
-                mScreen = mSwitchToScreen.getConstructor(this.getClass()).newInstance(this);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            mSwitchToScreen = null;
-        }
+        mScreen.render(Gdx.graphics.getDeltaTime());
 
         mFps.log();
 	}
@@ -183,7 +185,22 @@ public class IvcGame extends ApplicationAdapter {
     }
 
     public void switchToScreen(Class<? extends AbstractScreen> screenClass) {
-        mSwitchToScreen = screenClass;
+        try {
+            AbstractScreen screen = screenClass.getConstructor(this.getClass()).newInstance(this);
+            switchToScreen(screen, true);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void switchToScreen(AbstractScreen newScreen, boolean dispose) {
+        if (dispose && mScreen != null) {
+            mScreen.dispose();
+        }
+        mScreen = newScreen;
+        if (mScreen != null) {
+            Gdx.input.setInputProcessor(mScreen.getStage());
+        }
     }
 
 }

@@ -53,6 +53,7 @@ import com.quadro.games.invokervscrab.ivc.skill.worker.mixed.Result222;
 import com.quadro.games.invokervscrab.ivc.skill.worker.mixed.Result223;
 import com.quadro.games.invokervscrab.ivc.skill.worker.mixed.Result233;
 import com.quadro.games.invokervscrab.ivc.skill.worker.mixed.Result333;
+import com.quadro.games.invokervscrab.screen.Fight.PauseButton;
 import com.quadro.games.invokervscrab.screen.UiControl.ExpBar;
 import com.quadro.games.invokervscrab.screen.UiControl.HpBar;
 import com.quadro.games.invokervscrab.screen.UiControl.MpBar;
@@ -73,7 +74,6 @@ import java.util.Map;
 public class FightScreen extends AbstractScreen {
 
     private TextButton.TextButtonStyle textButtonStyle;
-    private BitmapFont mFont;
     private TextureAtlas buttonAtlas;
 
     private final List<ImageButton> mBuffStack = new ArrayList<ImageButton>();
@@ -94,13 +94,10 @@ public class FightScreen extends AbstractScreen {
         super(game);
 
         // Разрешение
-        float viewportWidth = 400 * mPx;
-        float viewportHeight = 300 * mPx;
-
-        mStage.setViewport(new FitViewport(viewportWidth, viewportHeight));
+        mStage.setViewport(new FitViewport(400 * mPx, 300 * mPx));
         mStage.getViewport().update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
 
-        mFont = mSkin.getFont("default");
+        BitmapFont font = mSkin.getFont("default");
 
         buttonAtlas = new TextureAtlas(Gdx.files.internal("data/ui/button.pack"));
         mSkin.addRegions(buttonAtlas);
@@ -175,9 +172,9 @@ public class FightScreen extends AbstractScreen {
                 mSkin.getDrawable("ui-button-up-64-np"),
                 mSkin.getDrawable("ui-button-down-64-np"),
                 null,
-                mFont
+                font
         );
-//        textButtonStyle.font = mFont;
+//        textButtonStyle.font = font;
 //        textButtonStyle.up = mSkin.getDrawable("ui-button-up");
 //        textButtonStyle.down = mSkin.getDrawable("ui-button-down");
 //        textButtonStyle.checked = skin.getDrawable("checked-button");
@@ -186,7 +183,7 @@ public class FightScreen extends AbstractScreen {
         mSkin.add("transparent", transparent, Drawable.class);
         mSkin.add(MixedFirstSkill.class.getName(), transparent, Drawable.class);
         mSkin.add(MixedSecondSkill.class.getName(), transparent, Drawable.class);
-        Label.LabelStyle mpCostLabelStyle = new Label.LabelStyle(mFont, Color.WHITE);
+        Label.LabelStyle mpCostLabelStyle = new Label.LabelStyle(font, Color.WHITE);
         mpCostLabelStyle.background = new ColorDrawable(Color.BLUE);
         mSkin.add("label-style-mp-cost", mpCostLabelStyle, Label.LabelStyle.class);
 
@@ -259,14 +256,13 @@ public class FightScreen extends AbstractScreen {
 
         // подсказка
         TextButton btnHint = new TextButton("", textButtonStyle);
-        initBounds(btnHint, 0, 260, 80, 40);
+        addStageBounds(btnHint, 0, 260, 80, 40);
 
         // текст на подсказке
         Image imgHintLabel = new Image(mSkin.get("ui-button-hint-text", Texture.class));
         initBounds(imgHintLabel, 10, 10, 60, 20);
         btnHint.addActor(imgHintLabel);
 
-        mStage.addActor(btnHint);
         btnHint.addListener(new ClickListener() {
 
             @Override
@@ -281,6 +277,9 @@ public class FightScreen extends AbstractScreen {
             }
 
         });
+
+        // Пауза
+        new PauseButton(this, textButtonStyle);
 
         // первый сложный скилл
         final SkillButton sbFirstMixed = new SkillButton(

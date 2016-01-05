@@ -48,6 +48,10 @@ public abstract class AbstractScreen implements Screen {
         mStage.addActor(actor);
     }
 
+    public IvcGame getGame() {
+        return mGame;
+    }
+
     public float getPx() {
         return mPx;
     }
@@ -74,6 +78,7 @@ public abstract class AbstractScreen implements Screen {
 
     @Override
     public void resize (int width, int height) {
+
     }
 
     @Override

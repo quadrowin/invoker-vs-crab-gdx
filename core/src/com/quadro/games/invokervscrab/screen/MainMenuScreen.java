@@ -1,18 +1,15 @@
 package com.quadro.games.invokervscrab.screen;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.quadro.games.invokervscrab.IvcGame;
 import com.quadro.games.invokervscrab.screen.UiControl.MenuButton;
-import com.quadro.games.invokervscrab.view.ColorDrawable;
 
 /**
  * Created by Quadrowin on 02.01.2016.
@@ -23,10 +20,7 @@ public class MainMenuScreen extends AbstractScreen {
         super(game);
 
         // Разрешение
-        float viewportWidth = 400 * mPx;
-        float viewportHeight = 300 * mPx;
-
-        mStage.setViewport(new FitViewport(viewportWidth, viewportHeight));
+        mStage.setViewport(new FitViewport(400 * mPx, 300 * mPx));
         mStage.getViewport().update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
 
         Texture texture = new Texture(Gdx.files.internal("data/ui/background/footer_lodyas.png"));
@@ -45,11 +39,6 @@ public class MainMenuScreen extends AbstractScreen {
                 font
         );
         mSkin.add("text-button-style", textButtonStyle);
-
-
-        Label.LabelStyle menuButtonLabelStyle = new Label.LabelStyle(font, Color.WHITE);
-        menuButtonLabelStyle.background = new ColorDrawable(Color.BLUE);
-        mSkin.add("label-style-menu-button", menuButtonLabelStyle, Label.LabelStyle.class);
 
         MenuButton btnExit = new MenuButton(
                 this,
